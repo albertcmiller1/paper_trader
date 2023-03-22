@@ -1,0 +1,2 @@
+stock_url: "https://yahoo-finance15.p.rapidapi.com/api/yahoo/hi/history/{stock}/15m"
+api_key: ""
