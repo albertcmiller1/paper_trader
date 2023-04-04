@@ -79,13 +79,4 @@ class Trader:
         return df
 
 
-trader = Trader('BABA')
-# df = trader.get_stocks('1wk')
-# trader.get_and_write_to_csv("1d")
-df = trader.get_from_csv("stock_csvs/BABA_1d.csv")
-trader.add_moving_average(df, 50)
-# trader.plot_(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
-trader.plot_volume(df)
-# trader.plot(df, ('high', 'g'))
 
-print(df.head())

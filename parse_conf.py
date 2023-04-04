@@ -11,8 +11,8 @@ class Env:
 
         config = {}
 
-        for item in data: 
-            config.update(item)
+        for config_item in data: 
+            config.update(config_item)
 
         self.config = config
 
