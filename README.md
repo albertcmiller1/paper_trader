@@ -24,7 +24,7 @@ This repo will allow a user to create a paper portfolio by buying and selling st
 * sell stock 
 * dynamodb schema: (user, stock_ticker, buy_date, buy_price, buy_quantity) 
 
-## To get started... clone the repo and run 
+## To get started clone the repo and run 
 
 * `pipenv shell`
 * `pipenv install`

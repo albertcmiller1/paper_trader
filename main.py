@@ -14,15 +14,15 @@ def main() -> int:
     elif buy_stock: 
         print(f'buy {quantity} shares of {buy_stock}')
     elif sell_stock: 
-        print(f'buy {quantity} shares of {sell_stock}')
+        print(f'sell {quantity} shares of {sell_stock}')
     elif graph_portfolio: 
         print(f'get all users stocks, calulate earnings over time, and graph')
     elif graph_stock: 
-        print(f"go graph {graph_stock}")
+        print(f"graphing {graph_stock}...")
         df = trader.get_from_csv("stock_csvs/AAPL_1d.csv")
         df = trader.add_moving_average(df, 50)
-        # trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
-        trader.plot_volume(df)
+        trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
+        # trader.plot_volume(df)
     else: 
         print('please use the -h or --help option to list out some of the availiable features of this repository.')
 
@@ -43,7 +43,7 @@ def parse_app_args():
 
     if args.buy_stock or args.sell_stock or args.quantity: 
         if not ((args.buy_stock and args.quantity) or (args.sell_stock and args.quantity)): 
-            print("if you're buying or selling a stock, you must specify a quantity and ticker")
+            print("if you're buying or selling a stock, you must specify a ticker and quantity")
             sys.exit()
 
     return args.user, args.list_portfolio, args.buy_stock, args.sell_stock, args.quantity, args.graph_portfolio, args.graph_stock
