@@ -11,7 +11,10 @@ from matplotlib import dates as mdates
 
 
 class Trader: 
-    def __init__(self, stock='AAPL'):
+    def __init__(
+            self, 
+            stock="AAPL"
+        ):
         self.conf = Env("configuration.yaml").config
         self.stock = stock
         self.url = self.conf['stock_url'] + self.stock
@@ -21,7 +24,7 @@ class Trader:
             "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
         }
 
-    def get_stocks(self, time_interval):
+    def get_stocks(self, time_interval: str) -> pd.DataFrame:
         if time_interval not in  ["5m", "15m", "30m", "1h", "1d", "1wk", "1mo", "3mo"]:
             return False
         
@@ -35,16 +38,16 @@ class Trader:
 
         return pd.DataFrame(stocks_arr)
 
-    def get_and_write_to_csv(self, time_interval):
+    def get_and_write_to_csv(self, time_interval) -> bool:
         file_name = "stock_csvs/" + self.stock + "_" +time_interval + ".csv"
         df = self.get_stocks(time_interval)
         df.to_csv(file_name, index=True, index_label='index')
         return True 
 
-    def get_from_csv(self, csv_file):
+    def get_from_csv(self, csv_file) -> pd.DataFrame:
         return pd.read_csv(csv_file, parse_dates=True, index_col=0)
 
-    def plot(self, df, *args):
+    def plot(self, df, *args) -> None:
         style.use('ggplot')
 
         for key in args:
@@ -56,7 +59,7 @@ class Trader:
         plt.legend()
         plt.show()
 
-    def plot_volume(self, df, *args):
+    def plot_volume(self, df, *args) -> None:
         style.use('ggplot')
 
         ax1 =  plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
@@ -69,12 +72,11 @@ class Trader:
 
         plt.show()
     
-    def add_moving_average(self, df, size):
+    def add_moving_average(self, df, size) -> pd.DataFrame:
         ma_name = str(size) + "ma" # ex) 50ma
         df[ma_name] = df['close'].rolling(window=size, min_periods=0).mean()
         df.dropna(inplace=True) # removes the entire row of all rows that have NaN
         return df
-
 
 
 trader = Trader('BABA')

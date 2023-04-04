@@ -11,6 +11,7 @@ beautifulsoup4 = "*"
 scikit-learn = "*"
 requests = "*"
 pyyaml = "*"
+mypy = "*"
 
 [dev-packages]
 

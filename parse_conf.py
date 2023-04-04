@@ -14,6 +14,5 @@ class Env:
         for item in data: 
             config.update(item)
 
-        # print(config)
         self.config = config
 
