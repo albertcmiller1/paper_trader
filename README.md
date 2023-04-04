@@ -22,7 +22,7 @@ This repo will allow a user to create a paper portfolio by buying and selling st
 * get all stocks a user owns 
 * buy stock 
 * sell stock 
-* dynamodb schema: (user, stock_ticker, buy_date, buy_price, buy_quantity) 
+* dynamodb schema: (user, stock_ticker, buy_date, price, transaction_type, quantity) 
 
 ## To get started clone the repo and run 
 
