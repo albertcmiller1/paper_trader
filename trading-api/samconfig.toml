@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "paper-trader-1"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1uvhaxrsuc1zy"
+s3_prefix = "paper-trader-1"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

@@ -1,0 +1,112 @@
+{
+    "resource": "/hello",
+    "path": "/product/",
+    "httpMethod": "POST",
+    "headers": {
+      "Accept": "*/*",
+      "CloudFront-Forwarded-Proto": "https",
+      "CloudFront-Is-Desktop-Viewer": "true",
+      "CloudFront-Is-Mobile-Viewer": "false",
+      "CloudFront-Is-SmartTV-Viewer": "false",
+      "CloudFront-Is-Tablet-Viewer": "false",
+      "CloudFront-Viewer-ASN": "12271",
+      "CloudFront-Viewer-Country": "US",
+      "Host": "rbks09r44k.execute-api.us-east-1.amazonaws.com",
+      "User-Agent": "curl/7.79.1",
+      "Via": "2.0 cd958e502c6aea704f0f824e60431e72.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Id": "PwDwr6B3VdDOLXPZoWVdC6qjo-ap0wLqh1AQyg4FFE-XW4xHBtT8iA==",
+      "X-Amzn-Trace-Id": "Root=1-642c9cdf-002259364e64fa8215769a4f",
+      "X-Forwarded-For": "47.230.198.14, 15.158.35.207",
+      "X-Forwarded-Port": "443",
+      "X-Forwarded-Proto": "https"
+    },
+    "multiValueHeaders": {
+      "Accept": [
+        "*/*"
+      ],
+      "CloudFront-Forwarded-Proto": [
+        "https"
+      ],
+      "CloudFront-Is-Desktop-Viewer": [
+        "true"
+      ],
+      "CloudFront-Is-Mobile-Viewer": [
+        "false"
+      ],
+      "CloudFront-Is-SmartTV-Viewer": [
+        "false"
+      ],
+      "CloudFront-Is-Tablet-Viewer": [
+        "false"
+      ],
+      "CloudFront-Viewer-ASN": [
+        "12271"
+      ],
+      "CloudFront-Viewer-Country": [
+        "US"
+      ],
+      "Host": [
+        "rbks09r44k.execute-api.us-east-1.amazonaws.com"
+      ],
+      "User-Agent": [
+        "curl/7.79.1"
+      ],
+      "Via": [
+        "2.0 cd958e502c6aea704f0f824e60431e72.cloudfront.net (CloudFront)"
+      ],
+      "X-Amz-Cf-Id": [
+        "PwDwr6B3VdDOLXPZoWVdC6qjo-ap0wLqh1AQyg4FFE-XW4xHBtT8iA=="
+      ],
+      "X-Amzn-Trace-Id": [
+        "Root=1-642c9cdf-002259364e64fa8215769a4f"
+      ],
+      "X-Forwarded-For": [
+        "47.230.198.14, 15.158.35.207"
+      ],
+      "X-Forwarded-Port": [
+        "443"
+      ],
+      "X-Forwarded-Proto": [
+        "https"
+      ]
+    },
+    "queryStringParameters": null,
+    "multiValueQueryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+      "resourceId": "x6qouf",
+      "resourcePath": "/product",
+      "httpMethod": "POST",
+      "extendedRequestId": "C31y_EIgIAMFnWw=",
+      "requestTime": "04/Apr/2023:21:55:43 +0000",
+      "path": "/Prod/product/",
+      "accountId": "719501685385",
+      "protocol": "HTTP/1.1",
+      "stage": "Prod",
+      "domainPrefix": "rbks09r44k",
+      "requestTimeEpoch": 1680645343655,
+      "requestId": "ae4e20be-00a7-4df6-b5df-04f95e48bbdb",
+      "identity": {
+        "cognitoIdentityPoolId": null,
+        "accountId": null,
+        "cognitoIdentityId": null,
+        "caller": null,
+        "sourceIp": "47.230.198.14",
+        "principalOrgId": null,
+        "accessKey": null,
+        "cognitoAuthenticationType": null,
+        "cognitoAuthenticationProvider": null,
+        "userArn": null,
+        "userAgent": "curl/7.79.1",
+        "user": null
+      },
+      "domainName": "rbks09r44k.execute-api.us-east-1.amazonaws.com",
+      "apiId": "rbks09r44k"
+    },
+    "body": {
+      "productId": "001",
+      "name": "lucky_charms"
+    },
+    "isBase64Encoded": false
+  }
