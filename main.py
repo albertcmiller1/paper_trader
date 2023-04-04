@@ -7,19 +7,25 @@ def main() -> int:
     user, list_portfolio, buy_stock, sell_stock, quantity, graph_portfolio, graph_stock = parse_app_args()
     print(f"welcome {user}!")
 
+    trader = Trader()
 
-    # print(list_portfolio)
+    if list_portfolio: 
+        print('get a users stocks, and print out their portfolio')
+    elif buy_stock: 
+        print(f'buy {quantity} shares of {buy_stock}')
+    elif sell_stock: 
+        print(f'buy {quantity} shares of {sell_stock}')
+    elif graph_portfolio: 
+        print(f'get all users stocks, calulate earnings over time, and graph')
+    elif graph_stock: 
+        print(f"go graph {graph_stock}")
+        df = trader.get_from_csv("stock_csvs/AAPL_1d.csv")
+        df = trader.add_moving_average(df, 50)
+        # trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
+        trader.plot_volume(df)
+    else: 
+        print('please use the -h or --help option to list out some of the availiable features of this repository.')
 
-
-    # trader = Trader('BABA')
-    # df = trader.get_stocks('1wk')
-    # trader.get_and_write_to_csv("1d")
-    # df = trader.get_from_csv("stock_csvs/BABA_1d.csv")
-    # trader.add_moving_average(df, 50)
-    # trader.plot_(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
-    # trader.plot_volume(df)
-    # trader.plot(df, ('high', 'g'))
-    # print(df.head())
     return 0
 
 

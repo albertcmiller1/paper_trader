@@ -11,13 +11,10 @@ from matplotlib import dates as mdates
 
 
 class Trader: 
-    def __init__(
-            self, 
-            stock="AAPL"
-        ):
+    def __init__(self):
         self.conf = Env("configuration.yaml").config
-        self.stock = stock
-        self.url = self.conf['stock_url'] + self.stock
+        # self.url = self.conf['stock_url'] + self.stock
+        self.url = self.conf['stock_url']
         self.querystring = {"diffandsplits":"false"}
         self.headers = {
             "X-RapidAPI-Key": self.conf['api_key'],
@@ -70,6 +67,10 @@ class Trader:
         ax1.plot(df['date'], df['50ma'], 'b')
         ax2.bar(df['date'], df['volume'])
 
+        plt.title("Stonks")
+        plt.xlabel('date')
+        plt.ylabel('price')
+        plt.legend()
         plt.show()
     
     def add_moving_average(self, df, size) -> pd.DataFrame:
@@ -79,4 +80,13 @@ class Trader:
         return df
 
 
+# trader = Trader()
+# df = trader.get_stocks('1wk')
+# trader.get_and_write_to_csv("1d")
+# df = trader.get_from_csv("stock_csvs/BABA_1d.csv")
 
+# trader.add_moving_average(df, 50)
+# trader.plot_(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
+# trader.plot_volume(df)
+# trader.plot(df, ('high', 'g'))
+# print(df.head())
