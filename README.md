@@ -1,7 +1,7 @@
 # trading-with-python
 
 
-This repo will allow a user to create a paper portfolio by buying and selling stocks. 
+This repo will allow a user to create a paper portfolio via buying and selling stocks paper stocks. 
 
 ## Features: 
 * buy and sell paper stocks with api (hosted via AWS SAM, api gateway, lambda, dynamodb)
