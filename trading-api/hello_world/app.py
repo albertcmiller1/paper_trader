@@ -126,12 +126,19 @@ def saveProduct(requestBody):
         logger.info("starting saveProduct() function")
 
         if isinstance(requestBody, dict): 
-            pass
-        if isinstance(requestBody, str): 
-            requestBody = json.loads(requestBody)
-
-        logger.info(type(requestBody))
-        table.put_item(Item=requestBody)
+            logger.info(type(requestBody))
+            table.put_item(Item=requestBody)
+        elif isinstance(requestBody, str): 
+            logger.info('request body is a string')
+            body = json.loads(requestBody)
+            logger.info("request body is of type: ")
+            logger.info(type(body))
+            table.put_item(Item=body) # THIS IS GIVING ME ISSUES !!!
+        else: 
+            logger.info("unknown type of request body: ")
+            logger.info(type(requestBody))
+           
+         
         
         body = {
             'Operation': 'SAVE', 

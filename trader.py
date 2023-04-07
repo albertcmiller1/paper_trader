@@ -8,6 +8,7 @@ import datetime as dt
 from parse_conf import Env
 from datetime import datetime as dt
 from matplotlib import dates as mdates
+import pprint
 
 
 class Trader: 
@@ -21,7 +22,7 @@ class Trader:
             "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
         }
 
-    def get_stocks(self, time_interval: str) -> pd.DataFrame:
+    def get_stock_data(self, time_interval: str) -> pd.DataFrame:
         if time_interval not in  ["5m", "15m", "30m", "1h", "1d", "1wk", "1mo", "3mo"]:
             return False
         
@@ -36,7 +37,7 @@ class Trader:
         return pd.DataFrame(stocks_arr)
 
     def get_and_write_to_csv(self, time_interval) -> bool:
-        file_name = "stock_csvs/" + self.stock + "_" +time_interval + ".csv"
+        file_name = "stock_csvs/" + self.stock + "_" + time_interval + ".csv"
         df = self.get_stocks(time_interval)
         df.to_csv(file_name, index=True, index_label='index')
         return True 
@@ -78,6 +79,68 @@ class Trader:
         df[ma_name] = df['close'].rolling(window=size, min_periods=0).mean()
         df.dropna(inplace=True) # removes the entire row of all rows that have NaN
         return df
+
+    def buy_stock(self, user_id, stock, quantity) -> int:
+
+        time = dt.now()
+        date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
+
+        payload = {
+            "productId": "004", # need to take this out from template.yaml
+            "user_id": user_id, 
+            "ticker": stock, 
+            "quantity": quantity, 
+            "date": date_time_str, 
+            "transaction_type": "buy", 
+            "price": "143.32"
+        }
+
+        # print(payload)
+        post_url = self.conf['aws_api'] + '/product'
+
+        # try sending with the object as json and see if it breaks
+        response = requests.post(post_url, json = payload)
+        print(response.text)
+        return 1 # if successfull 
+
+    def get_user_holdings(self, user): 
+        get_url = self.conf['aws_api'] + '/products'
+        response = requests.get(get_url)
+        # print(response.text)
+
+        stocks = json.loads(response.text)['products']['Items']
+
+        print(stocks)
+
+        print("\n")
+
+        stocks_arr = []
+        for stock in stocks:
+            stocks_arr.append(stock)
+
+        df = pd.DataFrame(stocks_arr)
+
+        # print(df.loc[df['user_id'] == user])
+        # print("\n")
+        # print(df.head())
+
+        return df.loc[df['user_id'] == user]
+
+        # create dataframe 
+        # return df
+
+    # def create_portfolio_arr(self, stocks) -> pd.DataFrame:
+    #     # find 
+    #     # find earnings or losses over time 
+    #     return datafame 
+
+    # def sell_stock(self, user_id, stock, qantity):
+
+        # datetime_object = dt.strptime(date_time, '%m/%d/%Y %H:%M:%S')
+        # print(datetime_object)
+
+    #   x
+
 
 
 # trader = Trader()

@@ -10,12 +10,13 @@ say_hi = url + '/hello'
 get_url = url + '/products'
 post_url = url + '/product'
 
-myobj = {"productId": "003", "name": "poop"}
-# print(type(shit))
+myobj = {'productId': "003", 'name': "IMJSON"}
+print(type(shit))
 # print(isinstance(shit, dict))
 
 # x = requests.get(say_hi)
 x = requests.get(get_url)
 # x = requests.post(post_url, json = myobj)
+# x = requests.post(post_url, json = json.dumps(myobj))
 
 print(x.text)

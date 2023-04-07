@@ -16,7 +16,11 @@ This repo will allow a user to create a paper portfolio by buying and selling st
 * graph live stocks / live portfolio (would need a stock api that suppors websockets + graphing utility)
 * keep stock data in an s3 bucket and check there before making an api call
 * backtest a trading strategy for a stock 
+* use sns topic to send myself an email each time a new user signs up 
 
+## examples 
+* `python main.py --user albert --buy_stock AAPL --quantity 1`
+* `python main.py --user albert --list_portfolio`
 
 ## Api endpoints
 * get all stocks a user owns 

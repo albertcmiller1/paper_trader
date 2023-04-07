@@ -1,28 +1,40 @@
 import argparse
 import sys
 from trader import Trader
+from parse_conf import Env
 
 def main() -> int: 
+    # validate and parse arguments 
     if not sys.argv[1:]: print("please use the -h or --help option to get started")
     user, list_portfolio, buy_stock, sell_stock, quantity, graph_portfolio, graph_stock = parse_app_args()
-    print(f"welcome {user}!")
 
+    print(f"welcome {user}!")
     trader = Trader()
 
     if list_portfolio: 
-        print('get a users stocks, and print out their portfolio')
+        stocks = trader.get_user_holdings(user)
+        print(stocks.head())
+        # portfolio = trader.create_portfolio(stocks)
+        # trader.plot_portfolio(portfolio)
+
     elif buy_stock: 
-        print(f'buy {quantity} shares of {buy_stock}')
+        print(f'attempting to buy {quantity} shares of {buy_stock}')
+        trader.buy_stock(user, buy_stock, quantity)
+
     elif sell_stock: 
         print(f'sell {quantity} shares of {sell_stock}')
+        trader.sell_stock(user, buy_stock, quantity)
+
     elif graph_portfolio: 
         print(f'get all users stocks, calulate earnings over time, and graph')
+
     elif graph_stock: 
         print(f"graphing {graph_stock}...")
         df = trader.get_from_csv("stock_csvs/AAPL_1d.csv")
         df = trader.add_moving_average(df, 50)
         trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
         # trader.plot_volume(df)
+    
     else: 
         print('please use the -h or --help option to list out some of the availiable features of this repository.')
 
@@ -47,7 +59,6 @@ def parse_app_args():
             sys.exit()
 
     return args.user, args.list_portfolio, args.buy_stock, args.sell_stock, args.quantity, args.graph_portfolio, args.graph_stock
-
 
 if __name__ == "__main__": 
     main()
