@@ -4,7 +4,6 @@ from trader import Trader
 from parse_conf import Env
 
 def main() -> int: 
-    # validate and parse arguments 
     if not sys.argv[1:]: print("please use the -h or --help option to get started")
     user, list_portfolio, buy_stock, sell_stock, quantity, graph_portfolio, graph_stock = parse_app_args()
 
