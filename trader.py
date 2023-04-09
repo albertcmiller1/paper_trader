@@ -101,7 +101,6 @@ class Trader:
         }
 
         response = requests.post(post_url, json = payload)
-        # print(response.text)
         return 0
 
     def sell_stock(self, user_id, stock, quantity):
