@@ -1,6 +1,6 @@
 {
     "resource": "/hello",
-    "path": "/product/",
+    "path": "/product",
     "httpMethod": "POST",
     "headers": {
       "Accept": "*/*",

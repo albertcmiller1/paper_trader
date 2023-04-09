@@ -18,7 +18,7 @@ def main() -> int:
         print("\n")
 
         user_holdings = trader.create_portfolio(user_transactions)
-        
+
         # print(f"all holdings for {user}:")
         # print("\n")
         # print(user_holdings.head())
@@ -30,8 +30,8 @@ def main() -> int:
         trader.buy_stock(user, buy_stock, quantity)
 
     elif sell_stock: 
-        print(f'sell {quantity} shares of {sell_stock}')
-        trader.sell_stock(user, buy_stock, quantity)
+        print(f'attempting to sell {quantity} shares of {sell_stock}')
+        if trader.sell_stock(user, sell_stock, int(quantity)): print('success!')
 
     elif graph_portfolio: 
         print(f'get all users stocks, calulate earnings over time, and graph')

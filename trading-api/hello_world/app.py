@@ -127,7 +127,7 @@ def saveProduct(requestBody):
 
         if isinstance(requestBody, dict): 
             logger.info(type(requestBody))
-            table.put_item(Item=requestBody)
+            table.put_item(Item=requestBody) # will this work for multiple items? 
         elif isinstance(requestBody, str): 
             logger.info('request body is a string')
             body = json.loads(requestBody)

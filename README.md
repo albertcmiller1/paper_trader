@@ -20,6 +20,7 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 
 ## examples 
 * `python main.py --user albert --buy_stock AAPL --quantity 1`
+* `python main.py --user albert --sell_stock AAPL --quantity 1`
 * `python main.py --user albert --list_portfolio`
 
 ## Api endpoints

@@ -12,6 +12,7 @@ scikit-learn = "*"
 requests = "*"
 pyyaml = "*"
 mypy = "*"
+boto3 = "*"
 
 [dev-packages]
 

@@ -80,8 +80,9 @@ class Trader:
         df.dropna(inplace=True) # removes the entire row of all rows that have NaN
         return df
 
-    def get_current_price(self, ticker): 
+    def get_current_price(self, ticker) -> float: 
         print("getting current price")
+        return 143.32
 
     def buy_stock(self, user_id, ticker, quantity) -> int:
         time = dt.now()
@@ -89,12 +90,11 @@ class Trader:
         post_url = self.conf['aws_api'] + '/product'
 
         curr_price = "143.32"
-
         payload = {
-            "productId": "007", # need to take this out from template.yaml
+            "productId": "008", # need to take this out from template.yaml
             "user_id": user_id, 
             "ticker": ticker, 
-            "quantity": quantity, 
+            "quantity": int(quantity), 
             "date": date_time_str, 
             "transaction_type": "buy", 
             "price": curr_price
@@ -103,47 +103,61 @@ class Trader:
         response = requests.post(post_url, json = payload)
         return 0
 
-    def sell_stock(self, user_id, stock, quantity):
+    def sell_stock(self, user_id, ticker, quantity_to_sell) -> bool:
         '''
-        on second thought: thats not really an issue. 
-        this will just create the transaction 
+        post a sell order to the tansactions database
+        '''
+        user_transactions = self.get_user_transactions(user_id)
 
-        when choosing a stock to sell...
-        first check the quantity of that stock the user holds to validate you can sell
-        if the user doesnt want to liquidate all of his/her shares...
-        start at oldest transaction and sell that first. 
-        '''
+        shares_bought = user_transactions.loc[(user_transactions['ticker'] == ticker) & (user_transactions['transaction_type'] == 'buy')]['quantity'].sum()
+        shares_sold = user_transactions.loc[(user_transactions['ticker'] == ticker) & (user_transactions['transaction_type'] == 'sell')]['quantity'].sum()
+        shares_held = shares_bought - shares_sold
+
+        if shares_held < quantity_to_sell: 
+            print(f"{user_id} is trying to sell {quantity_to_sell} shares of {ticker} but only owns {shares_held}")
+            return False
+
         time = dt.now()
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
+        post_url = self.conf['aws_api'] + '/product'
         # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
 
+        curr_price = self.get_current_price(ticker)
         payload = {
             "productId": "007", # need to take this out from template.yaml
             "user_id": user_id, 
-            "ticker": stock, 
-            "quantity": quantity, 
+            "ticker": ticker, 
+            "quantity": quantity_to_sell, 
             "date": date_time_str, 
-            "transaction_type": "buy", 
-            "price": "143.32"
+            "transaction_type": "sell", 
+            "price": str(curr_price)
         }
 
+        response = requests.post(post_url, json = payload)
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"Error posting sell order: {e}")
+        return True
+        
 
-
-
-
-    def get_user_transactions(self, user) -> pd.DataFrame: 
+    def get_user_transactions(self, user): 
         '''
         returns a dataframe of a user's transactions
         '''
         get_url = self.conf['aws_api'] + '/products'
         response = requests.get(get_url)
+
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"Error fetching user transactions: {e}")
+
         stocks = json.loads(response.text)['products']['Items']
 
-        stocks_arr = []
-        for stock in stocks:
-            stocks_arr.append(stock)
-
-        df = pd.DataFrame(stocks_arr)
+        df = pd.DataFrame(stocks)
+        df['price'] = pd.to_numeric(df['price'])
+        df['quantity'] = df['quantity'].astype('int')
 
         return df.loc[df['user_id'] == user]
 
@@ -153,10 +167,18 @@ class Trader:
         return a df of their portfolio 
         '''
 
+        '''
+        note: 
+
+        when choosing a stock to sell...
+        first check the quantity of that stock the user holds to validate you can sell
+        if the user doesnt want to liquidate all of his/her shares...
+        start at oldest transaction and sell that first. 
+        '''
+
         print(transactions["ticker"].unique())
         stocks = transactions["ticker"].unique()
 
-        # for stock in stocks: 
 
 
 
@@ -164,16 +186,10 @@ class Trader:
 
 
 
-    # def create_portfolio_arr(self, stocks):
-    #     # find each unique 
-  
-
-
-    #   x
 
 
 
-# trader = Trader()
+
 # df = trader.get_stocks('1wk')
 # trader.get_and_write_to_csv("1d")
 # df = trader.get_from_csv("stock_csvs/BABA_1d.csv")

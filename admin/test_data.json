@@ -1,0 +1,76 @@
+{
+    "data": [
+        {
+            "productId": "001",
+            "user_id": "albert",
+            "ticker": "AAPL",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        },
+        {
+            "productId": "002",
+            "user_id": "albert",
+            "ticker": "AAPL",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        },
+        {
+            "productId": "003",
+            "user_id": "albert",
+            "ticker": "AAPL",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        },
+        {
+            "productId": "004",
+            "user_id": "albert",
+            "ticker": "TSLA",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        },
+        {
+            "productId": "005",
+            "user_id": "albert",
+            "ticker": "AAPL",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        },
+        {
+            "productId": "006",
+            "user_id": "albert",
+            "ticker": "AAPL",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "sell",
+            "price": "142.12"
+        },
+        {
+            "productId": "007",
+            "user_id": "chris",
+            "ticker": "AAPL",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        },
+        {
+            "productId": "008",
+            "user_id": "chris",
+            "ticker": "TSLA",
+            "quantity": 1,
+            "date": "04/07/2023 19:44:52",
+            "transaction_type": "buy",
+            "price": "142.12"
+        }
+    ]
+}
