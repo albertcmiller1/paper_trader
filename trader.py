@@ -80,13 +80,46 @@ class Trader:
         df.dropna(inplace=True) # removes the entire row of all rows that have NaN
         return df
 
-    def buy_stock(self, user_id, stock, quantity) -> int:
+    def get_current_price(self, ticker): 
+        print("getting current price")
 
+    def buy_stock(self, user_id, ticker, quantity) -> int:
         time = dt.now()
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
+        post_url = self.conf['aws_api'] + '/product'
+
+        curr_price = "143.32"
 
         payload = {
-            "productId": "004", # need to take this out from template.yaml
+            "productId": "007", # need to take this out from template.yaml
+            "user_id": user_id, 
+            "ticker": ticker, 
+            "quantity": quantity, 
+            "date": date_time_str, 
+            "transaction_type": "buy", 
+            "price": curr_price
+        }
+
+        response = requests.post(post_url, json = payload)
+        # print(response.text)
+        return 0
+
+    def sell_stock(self, user_id, stock, quantity):
+        '''
+        on second thought: thats not really an issue. 
+        this will just create the transaction 
+
+        when choosing a stock to sell...
+        first check the quantity of that stock the user holds to validate you can sell
+        if the user doesnt want to liquidate all of his/her shares...
+        start at oldest transaction and sell that first. 
+        '''
+        time = dt.now()
+        date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
+        # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
+
+        payload = {
+            "productId": "007", # need to take this out from template.yaml
             "user_id": user_id, 
             "ticker": stock, 
             "quantity": quantity, 
@@ -95,24 +128,17 @@ class Trader:
             "price": "143.32"
         }
 
-        # print(payload)
-        post_url = self.conf['aws_api'] + '/product'
 
-        # try sending with the object as json and see if it breaks
-        response = requests.post(post_url, json = payload)
-        print(response.text)
-        return 1 # if successfull 
 
-    def get_user_holdings(self, user): 
+
+
+    def get_user_transactions(self, user) -> pd.DataFrame: 
+        '''
+        returns a dataframe of a user's transactions
+        '''
         get_url = self.conf['aws_api'] + '/products'
         response = requests.get(get_url)
-        # print(response.text)
-
         stocks = json.loads(response.text)['products']['Items']
-
-        print(stocks)
-
-        print("\n")
 
         stocks_arr = []
         for stock in stocks:
@@ -120,24 +146,29 @@ class Trader:
 
         df = pd.DataFrame(stocks_arr)
 
-        # print(df.loc[df['user_id'] == user])
-        # print("\n")
-        # print(df.head())
-
         return df.loc[df['user_id'] == user]
 
-        # create dataframe 
-        # return df
+    def create_portfolio(self, transactions): 
+        '''
+        take in a df of all a user's transactions
+        return a df of their portfolio 
+        '''
 
-    # def create_portfolio_arr(self, stocks) -> pd.DataFrame:
-    #     # find 
-    #     # find earnings or losses over time 
-    #     return datafame 
+        print(transactions["ticker"].unique())
+        stocks = transactions["ticker"].unique()
 
-    # def sell_stock(self, user_id, stock, qantity):
+        # for stock in stocks: 
 
-        # datetime_object = dt.strptime(date_time, '%m/%d/%Y %H:%M:%S')
-        # print(datetime_object)
+
+
+
+
+
+
+    # def create_portfolio_arr(self, stocks):
+    #     # find each unique 
+  
+
 
     #   x
 

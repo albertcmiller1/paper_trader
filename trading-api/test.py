@@ -20,3 +20,22 @@ x = requests.get(get_url)
 # x = requests.post(post_url, json = json.dumps(myobj))
 
 print(x.text)
+
+
+
+holdings = {
+    'AAPL': {
+        'shares': 3,
+        'avg cost': 253.34,
+        'market value': 253.32,
+        'portfolio diversity': 3.00,
+        'total return': 0.02
+    },
+    'TSLA': {
+        'shares': 3,
+        'avg cost': 253.34,
+        'market value': 253.32,
+        'portfolio diversity': 3.00,
+        'total return': 0.02
+    }
+}

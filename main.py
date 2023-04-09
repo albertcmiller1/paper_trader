@@ -11,9 +11,18 @@ def main() -> int:
     trader = Trader()
 
     if list_portfolio: 
-        stocks = trader.get_user_holdings(user)
-        print(stocks.head())
-        # portfolio = trader.create_portfolio(stocks)
+        user_transactions = trader.get_user_transactions(user)
+        print(f"all trasactions for {user}:")
+        print("\n")
+        print(user_transactions.head())
+        print("\n")
+
+        user_holdings = trader.create_portfolio(user_transactions)
+        
+        # print(f"all holdings for {user}:")
+        # print("\n")
+        # print(user_holdings.head())
+        # portfolio = trader.create_portfolio(user_holdings)
         # trader.plot_portfolio(portfolio)
 
     elif buy_stock: 
