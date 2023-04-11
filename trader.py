@@ -15,24 +15,26 @@ class Trader:
     def __init__(self):
         self.conf = Env("configuration.yaml").config
         self.stock_quote_url = self.conf['stock_quote_url']
-        self.history_url = self.conf['stock_history_url']
+        self.stock_history_url = self.conf['stock_history_url']
         self.querystring = {"diffandsplits":"false"}
         self.headers = {
             "X-RapidAPI-Key": self.conf['api_key'],
             "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
         }
 
-    def get_stock_data(self, time_interval: str) -> pd.DataFrame:
+    def get_stock_data(self, stock: str, time_interval: str) -> pd.DataFrame:
         if time_interval not in  ["5m", "15m", "30m", "1h", "1d", "1wk", "1mo", "3mo"]:
             return False
         
-        url = self.url + "/" + time_interval
+        # url = self.stock_history_url + "/" + time_interval + "/" + stock
         response = requests.request("GET", url, headers=self.headers, params=self.querystring)
         dic = json.loads(response.text)
 
-        stocks_arr = []
-        for stock in dic["items"]:
-            stocks_arr.append(dic["items"][stock])
+        # load direclty into df ^ 
+
+        # stocks_arr = []
+        # for stock in dic["items"]:
+        #     stocks_arr.append(dic["items"][stock])
 
         return pd.DataFrame(stocks_arr)
 
@@ -84,7 +86,11 @@ class Trader:
         url = self.stock_quote_url + "/" + ticker
         response = requests.request("GET", url, headers=self.headers, params=self.querystring)
         curr_stock_data = json.loads(response.text)
-        return float(curr_stock_data[0]['ask'])
+        if float(curr_stock_data[0]['ask']): 
+            return float(curr_stock_data[0]['ask'])
+        else: 
+            print('error getting stock quote')
+            return 
 
     def buy_stock(self, user_id: str, ticker: str, quantity: int) -> int:
         time = dt.now()
@@ -92,7 +98,6 @@ class Trader:
         post_url = self.conf['aws_api'] + '/product'
         txn_id = str(uuid.uuid4())
 
-        curr_price = "143.32"
         payload = {
             "productId": txn_id, # need to take this out from template.yaml
             "user_id": user_id, 
@@ -100,7 +105,7 @@ class Trader:
             "quantity": int(quantity), 
             "date": date_time_str, 
             "transaction_type": "buy", 
-            "price": curr_price
+            "price": str(curr_price)
         }
 
         response = requests.post(post_url, json = payload)
@@ -128,6 +133,7 @@ class Trader:
         # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
 
         curr_price = self.get_current_price(ticker)
+
         payload = {
             "productId": txn_id, # need to take this out from template.yaml
             "user_id": user_id, 
@@ -171,14 +177,14 @@ class Trader:
     def create_portfolio(self, transactions: pd.DataFrame) -> dict: 
         '''
         take in a df of all a user's transactions
-        return a df of their portfolio 
+        return a dictionary of their portfolio 
         NOTE: uses a LIFO stack to choose which holdings(s) to sell 
         '''
 
         holdings = {}
-        stocks_held = transactions["ticker"].unique()
 
-        for ticker in stocks_held: 
+        # loop over all the different stocks a user owns 
+        for ticker in transactions["ticker"].unique(): 
             holdings[ticker] = {}
 
             # find how many shares the user holds
@@ -187,15 +193,12 @@ class Trader:
             shares_held = shares_bought - shares_sold
             holdings[ticker]['shares'] = shares_held
 
-            # print('all of user transactions of X ticker')
             txns_of_x_ticker = transactions.loc[(transactions['ticker'] == ticker)]
-            # print(txns_of_x_ticker.head(10))
-            # print('\n')
 
-            # curr_price = self.get_current_price(ticker)
             buy_stack = []
             market_value_arr = []
             capital_gains = 0
+            
             # loop over each stock bought or sold of same stock ticker 
             for _, row in txns_of_x_ticker.iterrows():
                 if row['transaction_type'] == 'buy': 
@@ -211,7 +214,6 @@ class Trader:
                         'ticker': row['ticker'],
                         'quantity': row['quantity']
                     })
-                    
 
                 if row['transaction_type'] == 'sell':
                     if not buy_stack:
@@ -221,25 +223,47 @@ class Trader:
                     num_stocks_to_sell = row['quantity']
                     stocks_sold = 0
                     while (stocks_sold < num_stocks_to_sell) and buy_stack: 
-                        newest_bought_stock = buy_stack.pop()
-                        for _ in range(newest_bought_stock['quantity']):
+                        # newest_bought_stock = buy_stack.pop() # ERROR we only want to pop if all stocks are sold ... right now we pop even if we sell one stock but quantity is 5
+
+                        newest_bought_stock = buy_stack[-1]
+
+                        quantity_cnt = 0
+                        quantity_sold_from_txn = newest_bought_stock['quantity']
+                        for _ in range(quantity_sold_from_txn):
                             gain = row['price'] - newest_bought_stock['price']
-                            capital_gains += gain 
+                            capital_gains += gain
                             market_value_arr.pop()
                             stocks_sold += 1
-                            if stocks_sold >= num_stocks_to_sell: break
-
-
-
+                            if quantity_cnt >= quantity_sold_from_txn:
+                                buy_stack.pop()
+                            if stocks_sold >= num_stocks_to_sell: 
+                                break
 
             market_value = 0 
-            for stock in market_value_arr: market_value += stock['quantity'] * stock['price']
+            total_quantity_owned = 0
+            for stock in market_value_arr: 
+                market_value += stock['quantity'] * stock['price']
+                total_quantity_owned += stock['quantity']
             holdings[ticker]['market_value'] = market_value
             holdings[ticker]['realized_gains'] = capital_gains
-            print('\n')
+            holdings[ticker]['average_cost'] = market_value / total_quantity_owned
 
-        print('\n')
-        print('\n')
+            total_returns = capital_gains
+            curr_price = self.get_current_price(ticker)
+            for stock in market_value_arr: 
+                total_returns += (curr_price - stock['price']) * stock['quantity']
+            holdings[ticker]['total_return'] = total_returns
+
+
+            print(f"market_value_arr: {market_value_arr}")
+            print(f"buy_stack: {buy_stack}")
+
+
+        total_value = 0
+        for stock in holdings.items(): 
+            total_value += stock[1]['market_value']
+        for stock in holdings: 
+            holdings[stock]['portfolio_diversity'] = (holdings[stock]['market_value'] / total_value) * 100
         return holdings 
 
 
@@ -253,19 +277,9 @@ holdings = {
         'total return': 0.02
     },
     'TSLA': {
-        'shares': 3,
-        'avg cost': 253.34,
-        'market value': 253.32,
-        'portfolio diversity': 3.00,
         'total return': 0.02
     }
 }
-
-
-# trader = Trader()
-# value = trader.get_current_price('AAPL')
-
-
 
 
 

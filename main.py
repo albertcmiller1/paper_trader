@@ -31,6 +31,15 @@ def main() -> int:
 
     elif graph_portfolio: 
         print(f'get all users stocks, calulate earnings over time, and graph')
+        user_transactions = trader.get_user_transactions(user)
+        if user_transactions.empty: 
+            print(f"{user} does not have any stocks yet!")
+            return 
+        
+        stocks_held = user_transactions["ticker"].unique()
+
+        for stock in stocks_held: 
+            trader.get_stock_data(stock)
 
     elif graph_stock: 
         print(f"graphing {graph_stock}...")
