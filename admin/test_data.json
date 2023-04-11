@@ -56,7 +56,7 @@
         },
         {
             "productId": "",
-            "user_id": "chris",
+            "user_id": "albert",
             "ticker": "AAPL",
             "quantity": 1,
             "date": "04/07/2023 12:00:00",
@@ -65,8 +65,8 @@
         },
         {
             "productId": "",
-            "user_id": "chris",
-            "ticker": "TSLA",
+            "user_id": "albert",
+            "ticker": "AAPL",
             "quantity": 1,
             "date": "04/07/2023 12:00:00",
             "transaction_type": "buy",

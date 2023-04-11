@@ -36,16 +36,16 @@ class Trader:
 
         return pd.DataFrame(stocks_arr)
 
-    def get_and_write_to_csv(self, time_interval) -> bool:
+    def get_and_write_to_csv(self, time_interval: str) -> bool:
         stocks = self.get_stocks(time_interval)
         file_name = "stock_csvs/" + self.stock + "_" + time_interval + ".csv"
         stocks.to_csv(file_name, index=True, index_label='index')
         return True 
 
-    def get_from_csv(self, csv_file) -> pd.DataFrame:
+    def get_from_csv(self, csv_file: str) -> pd.DataFrame:
         return pd.read_csv(csv_file, parse_dates=True, index_col=0)
 
-    def plot(self, df, *args) -> None:
+    def plot(self, df: pd.DataFrame, *args) -> None:
         style.use('ggplot')
 
         for key in args:
@@ -57,7 +57,7 @@ class Trader:
         plt.legend()
         plt.show()
 
-    def plot_volume(self, df, *args) -> None:
+    def plot_volume(self, df: pd.DataFrame, *args) -> None:
         style.use('ggplot')
 
         ax1 =  plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
@@ -74,24 +74,19 @@ class Trader:
         plt.legend()
         plt.show()
     
-    def add_moving_average(self, df, size) -> pd.DataFrame:
+    def add_moving_average(self, df: pd.DataFrame, size: str) -> pd.DataFrame:
         ma_name = str(size) + "ma" # ex) 50ma
         df[ma_name] = df['close'].rolling(window=size, min_periods=0).mean()
         df.dropna(inplace=True) # removes the entire row of all rows that have NaN
         return df
 
-    def get_current_price(self, ticker) -> float: 
-        print("getting current price...")
+    def get_current_price(self, ticker: str) -> float: 
         url = self.stock_quote_url + "/" + ticker
         response = requests.request("GET", url, headers=self.headers, params=self.querystring)
         curr_stock_data = json.loads(response.text)
-
-        # print('response from getting quote: ')
-        # pprint.pprint(curr_stock_data[0]['ask'])
-
         return float(curr_stock_data[0]['ask'])
 
-    def buy_stock(self, user_id, ticker, quantity) -> int:
+    def buy_stock(self, user_id: str, ticker: str, quantity: int) -> int:
         time = dt.now()
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
         post_url = self.conf['aws_api'] + '/product'
@@ -111,7 +106,7 @@ class Trader:
         response = requests.post(post_url, json = payload)
         return 0
 
-    def sell_stock(self, user_id, ticker, quantity_to_sell) -> bool:
+    def sell_stock(self, user_id: str, ticker: str, quantity_to_sell: int) -> bool:
         '''
         post a sell order to the tansactions database
         '''
@@ -173,24 +168,15 @@ class Trader:
 
         return txns_df_sorted.loc[txns_df_sorted['user_id'] == user]
 
-    def create_portfolio(self, transactions: pd.DataFrame): 
+    def create_portfolio(self, transactions: pd.DataFrame) -> dict: 
         '''
         take in a df of all a user's transactions
         return a df of their portfolio 
+        NOTE: uses a LIFO stack to choose which holdings(s) to sell 
         '''
-
-        '''
-        note: 
-
-        when choosing a stock to sell...
-        first check the quantity of that stock the user holds to validate you can sell
-        if the user doesnt want to liquidate all of his/her shares...
-        start at oldest transaction and sell that first. 
-        '''
-        print(transactions.head(10))
-        stocks_held = transactions["ticker"].unique()
 
         holdings = {}
+        stocks_held = transactions["ticker"].unique()
 
         for ticker in stocks_held: 
             holdings[ticker] = {}
@@ -200,41 +186,83 @@ class Trader:
             shares_sold = transactions.loc[(transactions['ticker'] == ticker) & (transactions['transaction_type'] == 'sell')]['quantity'].sum()
             shares_held = shares_bought - shares_sold
             holdings[ticker]['shares'] = shares_held
-            # print(f"user holds {shares_held} shares of {ticker}")
+
+            # print('all of user transactions of X ticker')
+            txns_of_x_ticker = transactions.loc[(transactions['ticker'] == ticker)]
+            # print(txns_of_x_ticker.head(10))
+            # print('\n')
+
+            # curr_price = self.get_current_price(ticker)
+            buy_stack = []
+            market_value_arr = []
+            capital_gains = 0
+            # loop over each stock bought or sold of same stock ticker 
+            for _, row in txns_of_x_ticker.iterrows():
+                if row['transaction_type'] == 'buy': 
+                    market_value_arr.append({
+                        'price': row['price'], 
+                        'quantity': row['quantity']
+                    })
+
+                    buy_stack.append({
+                        'date': row['date'], 
+                        'price': row['price'], 
+                        'transaction_type': row['transaction_type'], 
+                        'ticker': row['ticker'],
+                        'quantity': row['quantity']
+                    })
+                    
+
+                if row['transaction_type'] == 'sell':
+                    if not buy_stack:
+                        print('something wrong in transaciton history')
+                        return 
+
+                    num_stocks_to_sell = row['quantity']
+                    stocks_sold = 0
+                    while (stocks_sold < num_stocks_to_sell) and buy_stack: 
+                        newest_bought_stock = buy_stack.pop()
+                        for _ in range(newest_bought_stock['quantity']):
+                            gain = row['price'] - newest_bought_stock['price']
+                            capital_gains += gain 
+                            market_value_arr.pop()
+                            stocks_sold += 1
+                            if stocks_sold >= num_stocks_to_sell: break
 
 
-            # find the current value of each stock held 
-            # ticker_curr_price = self.get_current_price(ticker)
 
-        print('holdings: ')
-        print(holdings)
 
-        holdings = {
-            'AAPL': {
-                'shares': 3,
-                'avg cost': 253.34,
-                'market value': 253.32,
-                'portfolio diversity': 3.00,
-                'total return': 0.02
-            },
-            'TSLA': {
-                'shares': 3,
-                'avg cost': 253.34,
-                'market value': 253.32,
-                'portfolio diversity': 3.00,
-                'total return': 0.02
-            }
-        }
+            market_value = 0 
+            for stock in market_value_arr: market_value += stock['quantity'] * stock['price']
+            holdings[ticker]['market_value'] = market_value
+            holdings[ticker]['realized_gains'] = capital_gains
+            print('\n')
+
+        print('\n')
+        print('\n')
+        return holdings 
 
 
 
+holdings = {
+    'AAPL': {
+        'shares': 3,
+        'avg cost': 253.34,
+        'market value': 253.32,
+        'portfolio diversity': 3.00,
+        'total return': 0.02
+    },
+    'TSLA': {
+        'shares': 3,
+        'avg cost': 253.34,
+        'market value': 253.32,
+        'portfolio diversity': 3.00,
+        'total return': 0.02
+    }
+}
 
 
-
-
-
-
-trader = Trader()
+# trader = Trader()
 # value = trader.get_current_price('AAPL')
 
 

@@ -1,5 +1,6 @@
 import argparse
 import sys
+import pprint
 from trader import Trader
 from parse_conf import Env
 
@@ -17,6 +18,8 @@ def main() -> int:
             return 
 
         user_holdings = trader.create_portfolio(user_transactions)
+        print('holdings: ')
+        pprint.pprint(user_holdings)
 
         # print(f"all holdings for {user}:")
         # print("\n")
