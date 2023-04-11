@@ -17,7 +17,6 @@ post_url = "https://bjnhhj5gd2.execute-api.us-east-1.amazonaws.com/Prod" + "/pro
 
 for item in payload: 
     item["productId"] = str(uuid.uuid4())
-    # print(item)
     response = requests.post(post_url, json = item) # this works when data is all strings
     # response = requests.post(post_url, json = json.loads(item)) # this does not work
     print("\n")
