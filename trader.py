@@ -198,7 +198,7 @@ class Trader:
             buy_stack = []
             market_value_arr = []
             capital_gains = 0
-            
+
             # loop over each stock bought or sold of same stock ticker 
             for _, row in txns_of_x_ticker.iterrows():
                 if row['transaction_type'] == 'buy': 
@@ -255,8 +255,12 @@ class Trader:
             holdings[ticker]['total_return'] = total_returns
 
 
-            print(f"market_value_arr: {market_value_arr}")
-            print(f"buy_stack: {buy_stack}")
+            print(f"market_value_arr:")
+            for stock in market_value_arr: 
+                print(stock)
+            print(f"buy_stack:")
+            for stock in buy_stack: 
+                print(stock)
 
 
         total_value = 0
