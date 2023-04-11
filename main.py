@@ -7,8 +7,8 @@ from parse_conf import Env
 def main() -> int: 
     if not sys.argv[1:]: print("please use the -h or --help option to get started")
     user, list_portfolio, buy_stock, sell_stock, quantity, graph_portfolio, graph_stock = parse_app_args()
+    print(f"welcome {user}!\n")
 
-    print(f"welcome {user}!")
     trader = Trader()
 
     if list_portfolio: 
