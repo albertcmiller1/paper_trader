@@ -60,14 +60,12 @@ Resources:
 
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
-    # Type: AWS::Serverless::SimpleTable
     Properties:
       TableName: paper-trader-transactions
       AttributeDefinitions:
         - 
           AttributeName: productId
           AttributeType: S
-      #   BillingMode: PAY_PER_REQUEST
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5

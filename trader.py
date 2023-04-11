@@ -1,5 +1,6 @@
 import requests
 import json
+import uuid
 import pprint
 import pandas as pd 
 import matplotlib.pyplot as plt
@@ -8,14 +9,13 @@ import datetime as dt
 from parse_conf import Env
 from datetime import datetime as dt
 from matplotlib import dates as mdates
-import pprint
 
 
 class Trader: 
     def __init__(self):
         self.conf = Env("configuration.yaml").config
-        # self.url = self.conf['stock_url'] + self.stock
-        self.url = self.conf['stock_url']
+        self.stock_quote_url = self.conf['stock_quote_url']
+        self.history_url = self.conf['stock_history_url']
         self.querystring = {"diffandsplits":"false"}
         self.headers = {
             "X-RapidAPI-Key": self.conf['api_key'],
@@ -37,9 +37,9 @@ class Trader:
         return pd.DataFrame(stocks_arr)
 
     def get_and_write_to_csv(self, time_interval) -> bool:
+        stocks = self.get_stocks(time_interval)
         file_name = "stock_csvs/" + self.stock + "_" + time_interval + ".csv"
-        df = self.get_stocks(time_interval)
-        df.to_csv(file_name, index=True, index_label='index')
+        stocks.to_csv(file_name, index=True, index_label='index')
         return True 
 
     def get_from_csv(self, csv_file) -> pd.DataFrame:
@@ -81,17 +81,25 @@ class Trader:
         return df
 
     def get_current_price(self, ticker) -> float: 
-        print("getting current price")
-        return 143.32
+        print("getting current price...")
+        url = self.stock_quote_url + "/" + ticker
+        response = requests.request("GET", url, headers=self.headers, params=self.querystring)
+        curr_stock_data = json.loads(response.text)
+
+        # print('response from getting quote: ')
+        # pprint.pprint(curr_stock_data[0]['ask'])
+
+        return float(curr_stock_data[0]['ask'])
 
     def buy_stock(self, user_id, ticker, quantity) -> int:
         time = dt.now()
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
         post_url = self.conf['aws_api'] + '/product'
+        txn_id = str(uuid.uuid4())
 
         curr_price = "143.32"
         payload = {
-            "productId": "008", # need to take this out from template.yaml
+            "productId": txn_id, # need to take this out from template.yaml
             "user_id": user_id, 
             "ticker": ticker, 
             "quantity": int(quantity), 
@@ -117,14 +125,16 @@ class Trader:
             print(f"{user_id} is trying to sell {quantity_to_sell} shares of {ticker} but only owns {shares_held}")
             return False
 
+        txn_id = str(uuid.uuid4())
         time = dt.now()
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
         post_url = self.conf['aws_api'] + '/product'
+
         # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
 
         curr_price = self.get_current_price(ticker)
         payload = {
-            "productId": "007", # need to take this out from template.yaml
+            "productId": txn_id, # need to take this out from template.yaml
             "user_id": user_id, 
             "ticker": ticker, 
             "quantity": quantity_to_sell, 
@@ -139,9 +149,8 @@ class Trader:
         except requests.exceptions.HTTPError as e:
             raise Exception(f"Error posting sell order: {e}")
         return True
-        
 
-    def get_user_transactions(self, user): 
+    def get_user_transactions(self, user: str) -> pd.DataFrame: 
         '''
         returns a dataframe of a user's transactions
         '''
@@ -153,15 +162,18 @@ class Trader:
         except requests.exceptions.HTTPError as e:
             raise Exception(f"Error fetching user transactions: {e}")
 
-        stocks = json.loads(response.text)['products']['Items']
+        txns_df = pd.DataFrame(json.loads(response.text)['products']['Items'])
+        txns_df['price'] = pd.to_numeric(txns_df['price'])
+        txns_df['quantity'] = txns_df['quantity'].astype('int')
+        txns_df['date'] = pd.to_datetime(txns_df['date'])
+        txns_df_sorted = txns_df.sort_values(by='date')
+        # print(rtn.head(10))
+        # print('type: ')
+        # print(type(txns_df.date[0]))
 
-        df = pd.DataFrame(stocks)
-        df['price'] = pd.to_numeric(df['price'])
-        df['quantity'] = df['quantity'].astype('int')
+        return txns_df_sorted.loc[txns_df_sorted['user_id'] == user]
 
-        return df.loc[df['user_id'] == user]
-
-    def create_portfolio(self, transactions): 
+    def create_portfolio(self, transactions: pd.DataFrame): 
         '''
         take in a df of all a user's transactions
         return a df of their portfolio 
@@ -175,9 +187,44 @@ class Trader:
         if the user doesnt want to liquidate all of his/her shares...
         start at oldest transaction and sell that first. 
         '''
+        print(transactions.head(10))
+        stocks_held = transactions["ticker"].unique()
 
-        print(transactions["ticker"].unique())
-        stocks = transactions["ticker"].unique()
+        holdings = {}
+
+        for ticker in stocks_held: 
+            holdings[ticker] = {}
+
+            # find how many shares the user holds
+            shares_bought = transactions.loc[(transactions['ticker'] == ticker) & (transactions['transaction_type'] == 'buy')]['quantity'].sum()
+            shares_sold = transactions.loc[(transactions['ticker'] == ticker) & (transactions['transaction_type'] == 'sell')]['quantity'].sum()
+            shares_held = shares_bought - shares_sold
+            holdings[ticker]['shares'] = shares_held
+            # print(f"user holds {shares_held} shares of {ticker}")
+
+
+            # find the current value of each stock held 
+            # ticker_curr_price = self.get_current_price(ticker)
+
+        print('holdings: ')
+        print(holdings)
+
+        holdings = {
+            'AAPL': {
+                'shares': 3,
+                'avg cost': 253.34,
+                'market value': 253.32,
+                'portfolio diversity': 3.00,
+                'total return': 0.02
+            },
+            'TSLA': {
+                'shares': 3,
+                'avg cost': 253.34,
+                'market value': 253.32,
+                'portfolio diversity': 3.00,
+                'total return': 0.02
+            }
+        }
 
 
 
@@ -185,6 +232,10 @@ class Trader:
 
 
 
+
+
+trader = Trader()
+# value = trader.get_current_price('AAPL')
 
 
 

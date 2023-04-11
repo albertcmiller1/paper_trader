@@ -12,10 +12,9 @@ def main() -> int:
 
     if list_portfolio: 
         user_transactions = trader.get_user_transactions(user)
-        print(f"all trasactions for {user}:")
-        print("\n")
-        print(user_transactions.head())
-        print("\n")
+        if user_transactions.empty: 
+            print(f"{user} does not have any stocks yet!")
+            return 
 
         user_holdings = trader.create_portfolio(user_transactions)
 

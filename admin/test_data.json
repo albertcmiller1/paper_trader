@@ -1,74 +1,74 @@
 {
     "data": [
         {
-            "productId": "001",
-            "user_id": "albert",
-            "ticker": "AAPL",
-            "quantity": 1,
-            "date": "04/07/2023 19:44:52",
-            "transaction_type": "buy",
-            "price": "142.12"
-        },
-        {
-            "productId": "002",
-            "user_id": "albert",
-            "ticker": "AAPL",
-            "quantity": 1,
-            "date": "04/07/2023 19:44:52",
-            "transaction_type": "buy",
-            "price": "142.12"
-        },
-        {
-            "productId": "003",
-            "user_id": "albert",
-            "ticker": "AAPL",
-            "quantity": 1,
-            "date": "04/07/2023 19:44:52",
-            "transaction_type": "buy",
-            "price": "142.12"
-        },
-        {
-            "productId": "004",
+            "productId": "",
             "user_id": "albert",
             "ticker": "TSLA",
             "quantity": 1,
-            "date": "04/07/2023 19:44:52",
+            "date": "05/24/2022 12:00:00",
             "transaction_type": "buy",
-            "price": "142.12"
+            "price": "209.39"
         },
         {
-            "productId": "005",
+            "productId": "",
             "user_id": "albert",
-            "ticker": "AAPL",
+            "ticker": "TSLA",
             "quantity": 1,
-            "date": "04/07/2023 19:44:52",
-            "transaction_type": "buy",
-            "price": "142.12"
-        },
-        {
-            "productId": "006",
-            "user_id": "albert",
-            "ticker": "AAPL",
-            "quantity": 1,
-            "date": "04/07/2023 19:44:52",
+            "date": "06/24/2022 12:00:00",
             "transaction_type": "sell",
-            "price": "142.12"
+            "price": "245.71"
         },
         {
-            "productId": "007",
+            "productId": "",
+            "user_id": "albert",
+            "ticker": "TSLA",
+            "quantity": 1,
+            "date": "07/21/2022 12:00:00",
+            "transaction_type": "buy",
+            "price": "271.71"
+        },
+        {
+            "productId": "",
+            "user_id": "albert",
+            "ticker": "TSLA",
+            "quantity": 1,
+            "date": "08/15/2022 12:00:00",
+            "transaction_type": "buy",
+            "price": "301.79"
+        },
+        {
+            "productId": "",
+            "user_id": "albert",
+            "ticker": "TSLA",
+            "quantity": 1,
+            "date": "09/02/2022 12:00:00",
+            "transaction_type": "buy",
+            "price": "270.21"
+        },
+        {
+            "productId": "",
+            "user_id": "albert",
+            "ticker": "TSLA",
+            "quantity": 1,
+            "date": "10/11/2022 12:00:00",
+            "transaction_type": "sell",
+            "price": "216.50"
+        },
+        {
+            "productId": "",
             "user_id": "chris",
             "ticker": "AAPL",
             "quantity": 1,
-            "date": "04/07/2023 19:44:52",
+            "date": "04/07/2023 12:00:00",
             "transaction_type": "buy",
             "price": "142.12"
         },
         {
-            "productId": "008",
+            "productId": "",
             "user_id": "chris",
             "ticker": "TSLA",
             "quantity": 1,
-            "date": "04/07/2023 19:44:52",
+            "date": "04/07/2023 12:00:00",
             "transaction_type": "buy",
             "price": "142.12"
         }
