@@ -21,12 +21,6 @@ def main() -> int:
         print('holdings: ')
         pprint.pprint(user_holdings)
 
-        # print(f"all holdings for {user}:")
-        # print("\n")
-        # print(user_holdings.head())
-        # portfolio = trader.create_portfolio(user_holdings)
-        # trader.plot_portfolio(portfolio)
-
     elif buy_stock: 
         print(f'attempting to buy {quantity} shares of {buy_stock}')
         trader.buy_stock(user, buy_stock, quantity)
