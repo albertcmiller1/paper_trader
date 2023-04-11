@@ -16,15 +16,14 @@ def main() -> int:
         if user_transactions.empty: 
             print(f"{user} does not have any stocks yet!")
             return 
-
         user_holdings = trader.create_portfolio(user_transactions)
         print('holdings: ')
         pprint.pprint(user_holdings)
 
     elif buy_stock: 
         print(f'attempting to buy {quantity} shares of {buy_stock}')
-        trader.buy_stock(user, buy_stock, quantity)
-
+        if trader.buy_stock(user, buy_stock, quantity): print("success!")
+        
     elif sell_stock: 
         print(f'attempting to sell {quantity} shares of {sell_stock}')
         if trader.sell_stock(user, sell_stock, int(quantity)): print('success!')
@@ -43,15 +42,17 @@ def main() -> int:
 
     elif graph_stock: 
         print(f"graphing {graph_stock}...")
-        df = trader.get_from_csv("stock_csvs/AAPL_1d.csv")
+        # df = trader.get_from_csv("stock_csvs/AAPL_1d.csv")
+        df = trader.get_stock_data('AAPL', '1d')
         df = trader.add_moving_average(df, 50)
-        trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
         # trader.plot_volume(df)
-    
+        trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
     else: 
         print('please use the -h or --help option to list out some of the availiable features of this repository.')
 
     return 0
+
+
 
 
 def parse_app_args(): 

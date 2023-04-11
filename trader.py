@@ -1,3 +1,4 @@
+import sys
 import requests
 import json
 import uuid
@@ -23,31 +24,41 @@ class Trader:
         }
 
     def get_stock_data(self, stock: str, time_interval: str) -> pd.DataFrame:
-        if time_interval not in  ["5m", "15m", "30m", "1h", "1d", "1wk", "1mo", "3mo"]:
-            return False
+        possibile_intervals = ["5m", "15m", "30m", "1h", "1d", "1wk", "1mo", "3mo"]
+        if time_interval not in possibile_intervals:
+            print(f'please ensure your time interval is in {possibile_intervals}')
+            sys.exit()
         
-        # url = self.stock_history_url + "/" + time_interval + "/" + stock
+        url = self.stock_history_url + "/" + stock + "/" +  time_interval
         response = requests.request("GET", url, headers=self.headers, params=self.querystring)
         dic = json.loads(response.text)
 
-        # load direclty into df ^ 
+        # load direclty into df --> issue: response comes back in weird format 
 
-        # stocks_arr = []
-        # for stock in dic["items"]:
-        #     stocks_arr.append(dic["items"][stock])
+        stocks_arr = []
+        for stock in dic["items"]:
+            stocks_arr.append(dic["items"][stock])
 
         return pd.DataFrame(stocks_arr)
 
-    def get_and_write_to_csv(self, time_interval: str) -> bool:
-        stocks = self.get_stocks(time_interval)
-        file_name = "stock_csvs/" + self.stock + "_" + time_interval + ".csv"
+    def get_and_write_to_csv(self, stock: str, time_interval: str) -> pd.DataFrame:
+        stocks = self.get_stock_data(stock, time_interval)
+        file_name = "stock_csvs/" + stock + "_" + time_interval + ".csv"
         stocks.to_csv(file_name, index=True, index_label='index')
-        return True 
+        return stocks
 
     def get_from_csv(self, csv_file: str) -> pd.DataFrame:
+        '''
+        pass in relative file path
+        return dataframe from .csv file
+        '''
         return pd.read_csv(csv_file, parse_dates=True, index_col=0)
 
     def plot(self, df: pd.DataFrame, *args) -> None:
+        '''
+        plot a dataframe using matplotlib. 
+        ex) trader.plot_(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
+        '''
         style.use('ggplot')
 
         for key in args:
@@ -77,29 +88,35 @@ class Trader:
         plt.show()
     
     def add_moving_average(self, df: pd.DataFrame, size: str) -> pd.DataFrame:
+        '''
+        add a moving average to a dataframe 
+        ex) trader.add_moving_average(df, 50)
+        '''
         ma_name = str(size) + "ma" # ex) 50ma
         df[ma_name] = df['close'].rolling(window=size, min_periods=0).mean()
         df.dropna(inplace=True) # removes the entire row of all rows that have NaN
         return df
 
     def get_current_price(self, ticker: str) -> float: 
+        '''
+        return the current price of a stock
+        '''
         url = self.stock_quote_url + "/" + ticker
         response = requests.request("GET", url, headers=self.headers, params=self.querystring)
         curr_stock_data = json.loads(response.text)
-        if float(curr_stock_data[0]['ask']): 
-            return float(curr_stock_data[0]['ask'])
-        else: 
-            print('error getting stock quote')
-            return 
+        if curr_stock_data[0]['ask']: return float(curr_stock_data[0]['ask'])
+        print('error getting stock quote')
+        sys.exit()
 
-    def buy_stock(self, user_id: str, ticker: str, quantity: int) -> int:
+    def buy_stock(self, user_id: str, ticker: str, quantity: int) -> bool:
         time = dt.now()
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
         post_url = self.conf['aws_api'] + '/product'
         txn_id = str(uuid.uuid4())
+        curr_price = self.get_current_price(ticker)
 
         payload = {
-            "productId": txn_id, # need to take this out from template.yaml
+            "productId": txn_id,
             "user_id": user_id, 
             "ticker": ticker, 
             "quantity": int(quantity), 
@@ -109,7 +126,11 @@ class Trader:
         }
 
         response = requests.post(post_url, json = payload)
-        return 0
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"Error attempting to buy a stock: {e}")
+        return True
 
     def sell_stock(self, user_id: str, ticker: str, quantity_to_sell: int) -> bool:
         '''
@@ -168,9 +189,6 @@ class Trader:
         txns_df['quantity'] = txns_df['quantity'].astype('int')
         txns_df['date'] = pd.to_datetime(txns_df['date'])
         txns_df_sorted = txns_df.sort_values(by='date')
-        # print(rtn.head(10))
-        # print('type: ')
-        # print(type(txns_df.date[0]))
 
         return txns_df_sorted.loc[txns_df_sorted['user_id'] == user]
 
@@ -193,20 +211,13 @@ class Trader:
             shares_held = shares_bought - shares_sold
             holdings[ticker]['shares'] = shares_held
 
-            txns_of_x_ticker = transactions.loc[(transactions['ticker'] == ticker)]
-
             buy_stack = []
-            market_value_arr = []
             capital_gains = 0
+            txns_of_x_ticker = transactions.loc[(transactions['ticker'] == ticker)]
 
             # loop over each stock bought or sold of same stock ticker 
             for _, row in txns_of_x_ticker.iterrows():
                 if row['transaction_type'] == 'buy': 
-                    market_value_arr.append({
-                        'price': row['price'], 
-                        'quantity': row['quantity']
-                    })
-
                     buy_stack.append({
                         'date': row['date'], 
                         'price': row['price'], 
@@ -223,67 +234,55 @@ class Trader:
                     num_stocks_to_sell = row['quantity']
                     stocks_sold = 0
                     while (stocks_sold < num_stocks_to_sell) and buy_stack: 
-                        # newest_bought_stock = buy_stack.pop() # ERROR we only want to pop if all stocks are sold ... right now we pop even if we sell one stock but quantity is 5
-
-                        newest_bought_stock = buy_stack[-1]
 
                         quantity_cnt = 0
-                        quantity_sold_from_txn = newest_bought_stock['quantity']
-                        for _ in range(quantity_sold_from_txn):
-                            gain = row['price'] - newest_bought_stock['price']
+                        quantity_from_txn = buy_stack[-1]['quantity']
+
+                        for _ in range(quantity_from_txn):
+                            gain = row['price'] - buy_stack[-1]['price']
                             capital_gains += gain
-                            market_value_arr.pop()
                             stocks_sold += 1
-                            if quantity_cnt >= quantity_sold_from_txn:
+                            quantity_cnt += 1
+                            if quantity_cnt >= quantity_from_txn:
                                 buy_stack.pop()
                             if stocks_sold >= num_stocks_to_sell: 
                                 break
 
             market_value = 0 
             total_quantity_owned = 0
-            for stock in market_value_arr: 
+            for stock in buy_stack: 
                 market_value += stock['quantity'] * stock['price']
                 total_quantity_owned += stock['quantity']
+
             holdings[ticker]['market_value'] = market_value
-            holdings[ticker]['realized_gains'] = capital_gains
+            holdings[ticker]['realized_gains'] = round(capital_gains, 2)
             holdings[ticker]['average_cost'] = market_value / total_quantity_owned
 
             total_returns = capital_gains
             curr_price = self.get_current_price(ticker)
-            for stock in market_value_arr: 
-                total_returns += (curr_price - stock['price']) * stock['quantity']
-            holdings[ticker]['total_return'] = total_returns
-
-
-            print(f"market_value_arr:")
-            for stock in market_value_arr: 
-                print(stock)
-            print(f"buy_stack:")
             for stock in buy_stack: 
-                print(stock)
-
+                total_returns += (curr_price - stock['price']) * stock['quantity']
+           
+            holdings[ticker]['total_return'] = round(total_returns, 2)
 
         total_value = 0
         for stock in holdings.items(): 
             total_value += stock[1]['market_value']
         for stock in holdings: 
-            holdings[stock]['portfolio_diversity'] = (holdings[stock]['market_value'] / total_value) * 100
+            holdings[stock]['portfolio_diversity'] = round((holdings[stock]['market_value'] / total_value) * 100, 2)
         return holdings 
 
 
-
-holdings = {
-    'AAPL': {
-        'shares': 3,
-        'avg cost': 253.34,
-        'market value': 253.32,
-        'portfolio diversity': 3.00,
-        'total return': 0.02
-    },
-    'TSLA': {
-        'total return': 0.02
-    }
-}
+trader = Trader()
+# df = trader.get_stock_data('AAPL', '1d')
+# df = trader.get_and_write_to_csv('SNOW', '1d')
+# df = trader.get_from_csv('stock_csvs/SNOW_1d.csv')
+# trader.plot(df, ('high', 'g'), ('low', 'r'))
+# trader.add_moving_average(df, 50)
+# trader.plot_volume(df)
+# print(df.head())
+# curr_price = trader.get_current_price('SNOW')
+# print(curr_price)
 
 
 
@@ -291,7 +290,6 @@ holdings = {
 # trader.get_and_write_to_csv("1d")
 # df = trader.get_from_csv("stock_csvs/BABA_1d.csv")
 
-# trader.add_moving_average(df, 50)
 # trader.plot_(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
 # trader.plot_volume(df)
 # trader.plot(df, ('high', 'g'))
