@@ -53,8 +53,6 @@ def main() -> int:
     return 0
 
 
-
-
 def parse_app_args(): 
     parser = argparse.ArgumentParser()
     parser.add_argument("--user", help="use this flag to tell the program your user_id. this is needed to track which stocks you own.", required=True)

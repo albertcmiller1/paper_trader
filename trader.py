@@ -15,8 +15,8 @@ from matplotlib import dates as mdates
 class Trader: 
     def __init__(self):
         self.conf = Env("configuration.yaml").config
-        self.stock_quote_url = self.conf['stock_quote_url']
-        self.stock_history_url = self.conf['stock_history_url']
+        self.stock_quote_url = self.conf['rapidapi_quote_url']
+        self.stock_history_url = self.conf['rapidapi_history_url']
         self.querystring = {"diffandsplits":"false"}
         self.headers = {
             "X-RapidAPI-Key": self.conf['api_key'],

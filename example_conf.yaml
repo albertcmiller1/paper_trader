@@ -1,3 +1,4 @@
-stock_url: "https://yahoo-finance15.p.rapidapi.com/api/yahoo/hi/history/"
-api_key: ""
-my_api: ""
+rapidapi_quote_url: "https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote"
+rapidapi_history_url: "https://yahoo-finance15.p.rapidapi.com/api/yahoo/hi/history"
+rapidapi_api_key: ""
+aws_api: "https://bjnhhj5gd2.execute-api.us-east-1.amazonaws.com/Prod"

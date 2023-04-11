@@ -1,6 +1,4 @@
 # trading-with-python
-
-
 This repo will allow a user to create a paper portfolio via buying and selling paper stocks. You may also graph any stock, your portfolio, or a trading algorithm. 
 
 ## Features: 
@@ -11,6 +9,12 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 * graph any stock with moving averages 
 * download csv files of any stock 
     
+## examples 
+* `python main.py --user albert --list_portfolio`
+* `python main.py --user albert --buy_stock AAPL --quantity 1`
+* `python main.py --user albert --sell_stock AAPL --quantity 1`
+* `python main.py --user albert --graph_stock AAPL`
+
 ## Further Ideas 
 * inlude buy/sell strike prices (aws fargate + stock api that suppors websockets)
 * graph live stocks / live portfolio (websockets graphing utility)
@@ -18,11 +22,6 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 * backtest a trading strategy for a stock 
 * use sns topic to send myself an email each time a new user signs up 
 * change parition of dynamodb to user_id with clustering on timestamp for better performance 
-
-## examples 
-* `python main.py --user albert --list_portfolio`
-* `python main.py --user albert --buy_stock AAPL --quantity 1`
-* `python main.py --user albert --sell_stock AAPL --quantity 1`
 
 ## Api endpoints
 * get all stocks a user owns 
@@ -39,6 +38,9 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 ## Notes before you start 
 currently using the yahoo finance [rapidapi](https://rapidapi.com/sparior/api/yahoo-finance15) to get stock data. you will need to get your own api key and update `configuration.yaml`
 
-## dynamodb tables 
-* transactions table 
+## dynamodb table
+* transactions table: 
 * schema: (quantity, date, user_id, ticker, price, transaction_type, productId)
+
+## Todo 
+* work on plotting portfolio 
