@@ -9,6 +9,7 @@ def main() -> int:
     user, list_portfolio, buy_stock, sell_stock, quantity, graph_portfolio, graph_stock = parse_app_args()
     print(f"welcome {user}!\n")
 
+    use_csvs = True
     trader = Trader()
 
     if list_portfolio: 
@@ -29,16 +30,61 @@ def main() -> int:
         if trader.sell_stock(user, sell_stock, int(quantity)): print('success!')
 
     elif graph_portfolio: 
-        print(f'get all users stocks, calulate earnings over time, and graph')
+        # print(f'get all users stocks, calulate earnings over time, and graph')
         user_transactions = trader.get_user_transactions(user)
-        if user_transactions.empty: 
-            print(f"{user} does not have any stocks yet!")
-            return 
-        
-        stocks_held = user_transactions["ticker"].unique()
+        # if user_transactions.empty: 
+        #     print(f"{user} does not have any stocks yet!")
+        #     return 
 
-        for stock in stocks_held: 
-            trader.get_stock_data(stock)
+        # print(user_transactions.head(15))
+        # print("\n")
+        
+        stock_dfs = {}
+
+        stocks_held = user_transactions["ticker"].unique()
+        for ticker in stocks_held: 
+            txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
+            print(txns_of_x_ticker.head(15))
+            print("\n")
+            print(f"ticker: {ticker}")
+
+            len_txns = len(txns_of_x_ticker.index)
+            oldest_user_txn_date = txns_of_x_ticker.iloc[0]
+            newest_user_txn_date = txns_of_x_ticker.iloc[len_txns-1]
+
+            print(f"oldest_user_txn_date: {oldest_user_txn_date['date']}")
+            print(f"newest_user_txn_date: {newest_user_txn_date['date']}")
+            print("\n")
+
+            if use_csvs: 
+                stock_dfs[ticker] = trader.get_stock_data_from_csv("./stock_csvs/" + ticker + "_1d.csv")
+            else: 
+                stock_dfs[ticker] = trader.get_stock_data(ticker)
+
+
+            len_stock_data = len(stock_dfs[ticker].index)
+            oldest_stock_data_date = stock_dfs[ticker].iloc[0]['date']
+            newest_stock_data_date = stock_dfs[ticker].iloc[len_stock_data-1]['date']
+
+            print(f"oldest_stock_data_date: {oldest_stock_data_date}")
+            print(f"newest_stock_data_date: {newest_stock_data_date}")
+        
+
+        # print("\n")
+        # print(stock_dfs["AAPL"].head())
+        # print("\n")
+        # print(stock_dfs["AAPL"].tail())
+
+
+
+        '''
+        get dataframes for each of the stocks a user owns 
+        from the time of the first purchase til now ...
+            > calculate gain/loss for each day for each stock 
+            > aggregate gains/losses into dataframe 
+            > y = value_of_portfolio + gain
+        '''
+
 
     elif graph_stock: 
         print(f"graphing {graph_stock}...")

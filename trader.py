@@ -19,7 +19,7 @@ class Trader:
         self.stock_history_url = self.conf['rapidapi_history_url']
         self.querystring = {"diffandsplits":"false"}
         self.headers = {
-            "X-RapidAPI-Key": self.conf['api_key'],
+            "X-RapidAPI-Key": self.conf['rapidapi_api_key'],
             "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
         }
 
@@ -47,7 +47,7 @@ class Trader:
         stocks.to_csv(file_name, index=True, index_label='index')
         return stocks
 
-    def get_from_csv(self, csv_file: str) -> pd.DataFrame:
+    def get_stock_data_from_csv(self, csv_file: str) -> pd.DataFrame:
         '''
         pass in relative file path
         return dataframe from .csv file
@@ -223,7 +223,8 @@ class Trader:
                         'price': row['price'], 
                         'transaction_type': row['transaction_type'], 
                         'ticker': row['ticker'],
-                        'quantity': row['quantity']
+                        'quantity': row['quantity'],
+                        'num_sold': 0
                     })
 
                 if row['transaction_type'] == 'sell':
@@ -246,6 +247,9 @@ class Trader:
                             if quantity_cnt >= quantity_from_txn:
                                 buy_stack.pop()
                             if stocks_sold >= num_stocks_to_sell: 
+                                # add a marker for the stocks that are apart of most recent buy transaction that were sold 
+                                # ie) [buy 5, buy 2] we're planning to sell 3, so now we pop and still need to sell 1 one more. 
+                                # that means when we calculate total returns, we are accounting for one extra stock. 
                                 break
 
             market_value = 0 
@@ -254,10 +258,13 @@ class Trader:
                 market_value += stock['quantity'] * stock['price']
                 total_quantity_owned += stock['quantity']
 
-            holdings[ticker]['market_value'] = market_value
+            holdings[ticker]['market_value'] = round(market_value, 2)
             holdings[ticker]['realized_gains'] = round(capital_gains, 2)
-            holdings[ticker]['average_cost'] = market_value / total_quantity_owned
+            holdings[ticker]['average_cost'] = round(market_value / total_quantity_owned, 2) 
 
+            # not sure if this logic is 100% correct 
+            # we can sell 1 or two stocks from a transaction, but not pop them off of the buy_stack if there is a big quantity 
+            # if were on line 
             total_returns = capital_gains
             curr_price = self.get_current_price(ticker)
             for stock in buy_stack: 
@@ -274,6 +281,8 @@ class Trader:
 
 
 trader = Trader()
+
+
 # df = trader.get_stock_data('AAPL', '1d')
 # df = trader.get_and_write_to_csv('SNOW', '1d')
 # df = trader.get_from_csv('stock_csvs/SNOW_1d.csv')
