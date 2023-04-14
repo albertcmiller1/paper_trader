@@ -3,6 +3,7 @@ import sys
 import pprint
 from trader import Trader
 from parse_conf import Env
+from datetime import datetime as dt
 
 def main() -> int: 
     if not sys.argv[1:]: print("please use the -h or --help option to get started")
@@ -44,17 +45,6 @@ def main() -> int:
         stocks_held = user_transactions["ticker"].unique()
         for ticker in stocks_held: 
             txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
-            print(txns_of_x_ticker.head(15))
-            print("\n")
-            print(f"ticker: {ticker}")
-
-            len_txns = len(txns_of_x_ticker.index)
-            oldest_user_txn_date = txns_of_x_ticker.iloc[0]['date']
-            newest_user_txn_date = txns_of_x_ticker.iloc[len_txns-1]['date']
-
-            print(f"oldest_user_txn_date: {oldest_user_txn_date}")
-            print(f"newest_user_txn_date: {newest_user_txn_date}")
-            print("\n")
 
             if use_csvs: 
                 stock_dfs[ticker] = trader.get_stock_data_from_csv("./stock_csvs/" + ticker + "_1d.csv")
@@ -62,16 +52,55 @@ def main() -> int:
                 stock_dfs[ticker] = trader.get_stock_data(ticker)
 
 
+            # print(txns_of_x_ticker.head(15))
+            print("\n")
+            # print(f"ticker: {ticker}")
+
+            len_txns = len(txns_of_x_ticker.index)
+            oldest_user_txn_date = txns_of_x_ticker.iloc[0]['date'].to_pydatetime()
+            newest_user_txn_date = txns_of_x_ticker.iloc[len_txns-1]['date'].to_pydatetime()
+            
+            # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
+
+            print(f"oldest_user_txn_date: {type(oldest_user_txn_date)}")
+            print(f"oldest_user_txn_date: {oldest_user_txn_date}")
+            print(f"newest_user_txn_date: {newest_user_txn_date}")
+            print("\n")
+
             len_stock_data = len(stock_dfs[ticker].index)
-            oldest_stock_data_date = stock_dfs[ticker].iloc[0]['date']
-            newest_stock_data_date = stock_dfs[ticker].iloc[len_stock_data-1]['date']
+            oldest_stock_data_date = dt.fromtimestamp(stock_dfs[ticker].iloc[0]['date_utc'])
+            newest_stock_data_date = dt.fromtimestamp(stock_dfs[ticker].iloc[len_stock_data-1]['date_utc'])
 
             print(f"oldest_stock_data_date: {oldest_stock_data_date}")
+            print(f"oldest_stock_data_date: {type(oldest_stock_data_date)}")
             print(f"newest_stock_data_date: {newest_stock_data_date}")
+            print("\n")
+
+            # do a check to ensure all user transactions are within the bounds of oldest-newest stock data
+
+            starting_row = 0
+            ending_row = 0
+
+            for i, row in stock_dfs[ticker].iterrows():
+                # find what row of the dataframe contains the date of the older_user_txn 
+                # there's gotta be a better way to do this ...
+                # if cant figure out way using pandas ... use binary search 
+                if dt.fromtimestamp(row['date_utc']).date() == oldest_user_txn_date.date():
+                    starting_row = i
+                if dt.fromtimestamp(row['date_utc']).date() == newest_user_txn_date.date():
+                    ending_row = i
+
+
+            print(f"this is the starting row: ")
+            print(stock_dfs[ticker].iloc[starting_row])
+            print(f"this is the ending row: ")
+            print(stock_dfs[ticker].iloc[ending_row])
+            # do a check to ensure both rows were found before proceeding. 
+
         
 
         # print("\n")
-        # print(stock_dfs["AAPL"].head())
+        # print(stock_dfs["TSLA"].head())
         # print("\n")
         # print(stock_dfs["AAPL"].tail())
 
