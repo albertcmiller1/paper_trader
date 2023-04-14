@@ -97,12 +97,7 @@ def main() -> int:
             print(stock_dfs[ticker].iloc[ending_row])
             # do a check to ensure both rows were found before proceeding. 
 
-        
-
-        # print("\n")
-        # print(stock_dfs["TSLA"].head())
-        # print("\n")
-        # print(stock_dfs["AAPL"].tail())
+      
 
 
 
