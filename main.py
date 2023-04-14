@@ -32,9 +32,9 @@ def main() -> int:
     elif graph_portfolio: 
         # print(f'get all users stocks, calulate earnings over time, and graph')
         user_transactions = trader.get_user_transactions(user)
-        # if user_transactions.empty: 
-        #     print(f"{user} does not have any stocks yet!")
-        #     return 
+        if user_transactions.empty: 
+            print(f"{user} does not have any stocks yet!")
+            return 
 
         # print(user_transactions.head(15))
         # print("\n")
@@ -49,11 +49,11 @@ def main() -> int:
             print(f"ticker: {ticker}")
 
             len_txns = len(txns_of_x_ticker.index)
-            oldest_user_txn_date = txns_of_x_ticker.iloc[0]
-            newest_user_txn_date = txns_of_x_ticker.iloc[len_txns-1]
+            oldest_user_txn_date = txns_of_x_ticker.iloc[0]['date']
+            newest_user_txn_date = txns_of_x_ticker.iloc[len_txns-1]['date']
 
-            print(f"oldest_user_txn_date: {oldest_user_txn_date['date']}")
-            print(f"newest_user_txn_date: {newest_user_txn_date['date']}")
+            print(f"oldest_user_txn_date: {oldest_user_txn_date}")
+            print(f"newest_user_txn_date: {newest_user_txn_date}")
             print("\n")
 
             if use_csvs: 
@@ -80,6 +80,7 @@ def main() -> int:
         '''
         get dataframes for each of the stocks a user owns 
         from the time of the first purchase til now ...
+            > ensure the stock_data_df has enough data to span the user's transactions 
             > calculate gain/loss for each day for each stock 
             > aggregate gains/losses into dataframe 
             > y = value_of_portfolio + gain
