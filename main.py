@@ -89,11 +89,8 @@ def main() -> int:
                 if dt.fromtimestamp(row['date_utc']).date() == oldest_user_txn_date.date():
                     first_user_txn_row = i
 
-
-            # print(f"this is the starting row: ")
-            # print(stock_history_df.iloc[first_user_txn_row])
-            # print("\n")
      
+
 
             print("\n")
             stock_history_len = len(stock_history_df.index)
