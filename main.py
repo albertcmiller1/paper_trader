@@ -33,108 +33,27 @@ def main() -> int:
 
     elif graph_portfolio: 
         '''
-        1. get user's transactions [x]
-        2. find user's unique stocks [x]
-        3. loop over unique stocks [x]
-        4. for each uniqe stock, find the oldest purchase date [x]
-        5. grab stock price history data from oldest purchese date until now [x]
-        6. put this information into dictionary for each unique user's stocks [x]
-        7. for each dataframe in dictionary, calulate gain/loss for each day 
-        8. plot 
+        7. for each dataframe in dictionary, calulate gain/loss for each day []
+        8. plot []
         '''
-
-        # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
-        user_transactions = trader.get_user_transactions(user)
-        if user_transactions.empty: 
-            print(f"{user} does not have any stocks yet!")
-            return 
-
-        stock_dfs = {}
-
-        for ticker in user_transactions["ticker"].unique(): 
-            user_txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
-
-            if use_csvs: 
-                stock_history_df = trader.get_stock_data_from_csv("./stock_csvs/" + ticker + "_1d.csv")
-            else: 
-                stock_history_df = trader.get_stock_data(ticker, "1d")
-
-            len_txns = len(user_txns_of_x_ticker.index)
-            oldest_user_txn_date = user_txns_of_x_ticker.iloc[0]['date'].to_pydatetime()
-            # newest_user_txn_date = user_txns_of_x_ticker.iloc[len_txns-1]['date'].to_pydatetime()
-
-            print("\n")
-            print(f"oldest_user_txn_date: {oldest_user_txn_date}")
-            # print(f"oldest_user_txn_date: {type(oldest_user_txn_date)}")
-            # print(f"newest_user_txn_date: {newest_user_txn_date}")
-            # print("\n")
-
-            len_stock_data = len(stock_history_df.index)
-            oldest_stock_data_date = dt.fromtimestamp(stock_history_df.iloc[0]['date_utc'])
-            newest_stock_data_date = dt.fromtimestamp(stock_history_df.iloc[len_stock_data-1]['date_utc'])
-
-            # print(f"oldest_stock_data_date: {oldest_stock_data_date}")
-            # print(f"oldest_stock_data_date: {type(oldest_stock_data_date)}")
-            # print(f"newest_stock_data_date: {newest_stock_data_date}")
-            # print("\n")
-
-            # do a check to ensure all user transactions are within the bounds of oldest-newest stock data
-
-            first_user_txn_row = 0
-
-            for i, row in stock_history_df.iterrows():
-                # find what row of the dataframe contains the date of the older_user_txn 
-                # there's gotta be a better way to do this ...
-                # if cant figure out way using pandas ... use binary search 
-                if dt.fromtimestamp(row['date_utc']).date() == oldest_user_txn_date.date():
-                    first_user_txn_row = i
-
-     
-
-
-            print("\n")
-            stock_history_len = len(stock_history_df.index)
-            print(f"starting len: {stock_history_len}")
-            
-            trimed_df = stock_history_df.iloc[first_user_txn_row:stock_history_len]
-
-            new_len = len(trimed_df.index) - 1
-            print(f"new_len: {new_len}")
-            print("\n")
-
-
-
-            first_row_of_trimmed_df = trimed_df.iloc[0]['date']
-            last_row_of_trimmed_df = trimed_df.iloc[new_len]['date']
-
-            print(f"first_row_of_trimmed_df: {first_row_of_trimmed_df}")
-            print(f"last_row_of_trimmed_df: {last_row_of_trimmed_df}")
-
-
-            # print("\n")
-            # print(trimed_df.iloc[0])
-            # print("\n")
-
-            # len_df = len(trimed_df.index) -1
-            # print(trimed_df.iloc[len_df])
-
-            stock_dfs[ticker] = trimed_df 
-        
-
-        # print("\n")
-        # print(stock_dfs["TSLA"].head())
-        # print("\n")
-        # print(stock_dfs["AAPL"].tail())
-
-
         '''
-        get dataframes for each of the stocks a user owns 
         from the time of the first purchase til now ...
-            > ensure the stock_data_df has enough data to span the user's transactions 
             > calculate gain/loss for each day for each stock 
             > aggregate gains/losses into dataframe 
             > y = value_of_portfolio + gain
         '''
+
+        stock_dfs = trader.get_and_trim_stock_data(user, use_csvs)
+
+        for item in stock_dfs: 
+            print(item)
+
+
+
+        print("\n")
+        print(stock_dfs["TSLA"].head())
+
+
 
     elif graph_stock: 
         print(f"graphing {graph_stock}...")

@@ -280,6 +280,58 @@ class Trader:
         return holdings 
 
 
+    def get_and_trim_stock_data(self, user, use_csvs) -> dict:
+
+        # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
+        user_transactions = trader.get_user_transactions(user)
+        if user_transactions.empty: 
+            print(f"{user} does not have any stocks yet!")
+            return 
+
+        stock_dfs = {}
+
+        for ticker in user_transactions["ticker"].unique(): 
+            user_txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
+
+            if use_csvs: 
+                stock_history_df = trader.get_stock_data_from_csv("./stock_csvs/" + ticker + "_1d.csv")
+            else: 
+                stock_history_df = trader.get_stock_data(ticker, "1d")
+
+            len_txns = len(user_txns_of_x_ticker.index)
+            oldest_user_txn_date = user_txns_of_x_ticker.iloc[0]['date'].to_pydatetime()
+            newest_user_txn_date = user_txns_of_x_ticker.iloc[len_txns-1]['date'].to_pydatetime()
+
+            len_stock_data = len(stock_history_df.index)
+            oldest_stock_data_date = dt.fromtimestamp(stock_history_df.iloc[0]['date_utc'])
+            newest_stock_data_date = dt.fromtimestamp(stock_history_df.iloc[len_stock_data-1]['date_utc'])
+
+            if (oldest_user_txn_date < oldest_stock_data_date) or (newest_user_txn_date > newest_stock_data_date): 
+                print(f"not enough historical data colleted for {ticker}")
+                print(f"oldest_user_txn_date: {oldest_user_txn_date}")
+                print(f"oldest_stock_data_date: {oldest_stock_data_date}")
+                print("\n")
+                print(f"newest_user_txn_date: {newest_user_txn_date}")
+                print(f"newest_stock_data_date: {newest_stock_data_date}")
+                return 
+
+            first_user_txn_row = 0
+            for i, row in stock_history_df.iterrows():
+                # if cant figure out way using pandas ... use binary search instead 
+                if dt.fromtimestamp(row['date_utc']).date() == oldest_user_txn_date.date():
+                    first_user_txn_row = i
+
+     
+            stock_history_len = len(stock_history_df.index)
+            trimed_df = stock_history_df.iloc[first_user_txn_row:stock_history_len]
+            stock_dfs[ticker] = trimed_df 
+        
+        return stock_dfs
+
+
+
+
+
 trader = Trader()
 
 
