@@ -44,14 +44,59 @@ def main() -> int:
         '''
 
         stock_dfs = trader.get_and_trim_stock_data(user, use_csvs)
+        user_transactions = trader.get_user_transactions(user) 
 
-        for item in stock_dfs: 
-            print(item)
+        for ticker in stock_dfs: 
+            print(f"calculating profits for {ticker}")
+
+            user_txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
+
+            # print(user_txns_of_x_ticker.head(10))
+            print(f"{user} has {len(user_txns_of_x_ticker.index)} transactions for {ticker}")
+            print("\n")
+
+
+            user_txn_index = 0
+            num_shares = 0
+            for _, row in stock_dfs[ticker].iterrows():
+
+                stock_history_date = dt.fromtimestamp(row['date_utc']).date()
+                user_txn_date = user_txns_of_x_ticker.iloc[user_txn_index]['date'].to_pydatetime().date()
+
+                if stock_history_date == user_txn_date:
+                    # print(f"user transaction occurrd here on date: {stock_history_date}")
+                    # print(f"{user} owns {num_shares} share of {ticker}")
+                    # print(user_txns_of_x_ticker.iloc[user_txn_index])
+                    # print("\n")
+
+                    if user_txns_of_x_ticker.iloc[user_txn_index]['transaction_type'] == 'buy':
+                        num_shares += user_txns_of_x_ticker.iloc[user_txn_index]['quantity']
+                    elif user_txns_of_x_ticker.iloc[user_txn_index]['transaction_type'] == 'sell':
+                        num_shares -= user_txns_of_x_ticker.iloc[user_txn_index]['quantity']
+                    else: print("???")
+                    
+                    # print(f"{user} owns {num_shares} share of {ticker}")
+                    # print("\n")
+
+                    if user_txn_index <= len(user_txns_of_x_ticker.index) - 2:
+                        user_txn_index += 1
+
+
+                days_gain = row['open'] - row['close']
+                user_profit = days_gain * num_shares
+                print(user_profit)
+
+
+            # if user_txn_index != len(user_txns_of_x_ticker.index):
+            #     print("???")
+            #     print(f"user_txn_index: {user_txn_index}")
+            #     print(f"len user txns: {len(user_txns_of_x_ticker.index)}")
 
 
 
         print("\n")
-        print(stock_dfs["TSLA"].head())
+        # print(stock_dfs["TSLA"].head(10))
+
 
 
 

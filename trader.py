@@ -281,6 +281,8 @@ class Trader:
 
 
     def get_and_trim_stock_data(self, user, use_csvs) -> dict:
+        
+        stock_dfs = {}
 
         # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
         user_transactions = trader.get_user_transactions(user)
@@ -288,7 +290,6 @@ class Trader:
             print(f"{user} does not have any stocks yet!")
             return 
 
-        stock_dfs = {}
 
         for ticker in user_transactions["ticker"].unique(): 
             user_txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
