@@ -33,10 +33,6 @@ def main() -> int:
 
     elif graph_portfolio: 
         '''
-        7. for each dataframe in dictionary, calulate gain/loss for each day []
-        8. plot []
-        '''
-        '''
         from the time of the first purchase til now ...
             > calculate gain/loss for each day for each stock 
             > aggregate gains/losses into dataframe 
