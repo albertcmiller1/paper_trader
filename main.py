@@ -99,8 +99,6 @@ def main() -> int:
             print(stock_dfs[ticker].iloc[ending_row])
             # do a check to ensure both rows were found before proceeding. 
 
-            # how do we trip a dataframe 
-
             print("\n")
             starting_len = len(stock_dfs[ticker].index)
             print(f"starting len: {starting_len}")
