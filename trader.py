@@ -279,7 +279,6 @@ class Trader:
             holdings[stock]['portfolio_diversity'] = round((holdings[stock]['market_value'] / total_value) * 100, 2)
         return holdings 
 
-
     def get_and_trim_stock_data(self, user, use_csvs) -> dict:
         
         stock_dfs = {}
@@ -328,6 +327,68 @@ class Trader:
             stock_dfs[ticker] = trimed_df 
         
         return stock_dfs
+
+
+    def create_value_dataframes(self, stock_dfs, user_transactions) -> dict:
+        value_dfs = {}
+        for ticker in stock_dfs: 
+            print(f"calculating value and profits for {ticker}")
+
+            value_df = pd.DataFrame()
+
+            user_txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
+
+            # print(user_txns_of_x_ticker.head(10))
+            # print(f"{user} has {len(user_txns_of_x_ticker.index)} transactions for {ticker}")
+            # print("\n")
+
+
+            user_txn_index = 0
+            num_shares = 0
+            for _, row in stock_dfs[ticker].iterrows():
+
+                stock_history_date = dt.fromtimestamp(row['date_utc']).date()
+                user_txn_date = user_txns_of_x_ticker.iloc[user_txn_index]['date'].to_pydatetime().date()
+
+                if stock_history_date == user_txn_date:
+                    # print(f"user transaction occurrd here on date: {stock_history_date}")
+                    # print(f"{user} owns {num_shares} share of {ticker}")
+                    # print(user_txns_of_x_ticker.iloc[user_txn_index])
+                    # print("\n")
+
+                    if user_txns_of_x_ticker.iloc[user_txn_index]['transaction_type'] == 'buy':
+                        num_shares += user_txns_of_x_ticker.iloc[user_txn_index]['quantity']
+                    elif user_txns_of_x_ticker.iloc[user_txn_index]['transaction_type'] == 'sell':
+                        num_shares -= user_txns_of_x_ticker.iloc[user_txn_index]['quantity']
+                    else: print("???")
+                    
+                    # print(f"{user} owns {num_shares} share of {ticker}")
+                    # print("\n")
+
+                    if user_txn_index <= len(user_txns_of_x_ticker.index) - 2:
+                        user_txn_index += 1
+
+
+            # if user_txn_index != len(user_txns_of_x_ticker.index):
+            #     print("???")
+            #     print(f"user_txn_index: {user_txn_index}")
+            #     print(f"len user txns: {len(user_txns_of_x_ticker.index)}")
+                
+                value = row['close'] * num_shares
+                # days_gain = row['open'] - row['close']
+                # user_profit = days_gain * num_shares
+
+                value_df = value_df._append({
+                    'date': stock_history_date,
+                    "value": value,
+                    # "profit_"+ticker: user_profit,
+                    "num_shares": num_shares
+                }, ignore_index=True)
+
+
+            value_dfs[ticker] = value_df    
+            return value_dfs
+
 
 
 

@@ -4,6 +4,7 @@ import pprint
 from trader import Trader
 from parse_conf import Env
 from datetime import datetime as dt
+import pandas as pd
 
 def main() -> int: 
     if not sys.argv[1:]: print("please use the -h or --help option to get started")
@@ -32,72 +33,16 @@ def main() -> int:
         if trader.sell_stock(user, sell_stock, int(quantity)): print('success!')
 
     elif graph_portfolio: 
-        '''
-        7. for each dataframe in dictionary, calulate gain/loss for each day []
-        8. plot []
-        '''
-        '''
-        from the time of the first purchase til now ...
-            > calculate gain/loss for each day for each stock 
-            > aggregate gains/losses into dataframe 
-            > y = value_of_portfolio + gain
-        '''
-
         stock_dfs = trader.get_and_trim_stock_data(user, use_csvs)
         user_transactions = trader.get_user_transactions(user) 
+        value_dfs = trader.create_value_dataframes(stock_dfs, user_transactions)
 
-        for ticker in stock_dfs: 
-            print(f"calculating profits for {ticker}")
-
-            user_txns_of_x_ticker = user_transactions.loc[(user_transactions['ticker'] == ticker)]
-
-            # print(user_txns_of_x_ticker.head(10))
-            print(f"{user} has {len(user_txns_of_x_ticker.index)} transactions for {ticker}")
-            print("\n")
-
-
-            user_txn_index = 0
-            num_shares = 0
-            for _, row in stock_dfs[ticker].iterrows():
-
-                stock_history_date = dt.fromtimestamp(row['date_utc']).date()
-                user_txn_date = user_txns_of_x_ticker.iloc[user_txn_index]['date'].to_pydatetime().date()
-
-                if stock_history_date == user_txn_date:
-                    # print(f"user transaction occurrd here on date: {stock_history_date}")
-                    # print(f"{user} owns {num_shares} share of {ticker}")
-                    # print(user_txns_of_x_ticker.iloc[user_txn_index])
-                    # print("\n")
-
-                    if user_txns_of_x_ticker.iloc[user_txn_index]['transaction_type'] == 'buy':
-                        num_shares += user_txns_of_x_ticker.iloc[user_txn_index]['quantity']
-                    elif user_txns_of_x_ticker.iloc[user_txn_index]['transaction_type'] == 'sell':
-                        num_shares -= user_txns_of_x_ticker.iloc[user_txn_index]['quantity']
-                    else: print("???")
-                    
-                    # print(f"{user} owns {num_shares} share of {ticker}")
-                    # print("\n")
-
-                    if user_txn_index <= len(user_txns_of_x_ticker.index) - 2:
-                        user_txn_index += 1
-
-
-                days_gain = row['open'] - row['close']
-                user_profit = days_gain * num_shares
-                print(user_profit)
-
-
-            # if user_txn_index != len(user_txns_of_x_ticker.index):
-            #     print("???")
-            #     print(f"user_txn_index: {user_txn_index}")
-            #     print(f"len user txns: {len(user_txns_of_x_ticker.index)}")
-
-
-
-        print("\n")
-        # print(stock_dfs["TSLA"].head(10))
-
-
+        for df in value_dfs: 
+            print(df)
+            print(value_dfs[df].head()) 
+            trader.plot(value_dfs[df], ('value', 'g'))
+            # aggregate each of these dataframes 
+            # plot 
 
 
     elif graph_stock: 
