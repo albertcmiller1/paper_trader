@@ -42,7 +42,7 @@ def main() -> int:
         7. for each dataframe in dictionary, calulate gain/loss for each day 
         8. plot 
         '''
-        
+
         # datetime_object = dt.strptime(date_time_str, '%m/%d/%Y %H:%M:%S')
         user_transactions = trader.get_user_transactions(user)
         if user_transactions.empty: 
@@ -99,7 +99,6 @@ def main() -> int:
             print(stock_dfs[ticker].iloc[ending_row])
             # do a check to ensure both rows were found before proceeding. 
 
-<<<<<<< HEAD
             # how do we trip a dataframe 
 
             print("\n")
@@ -123,10 +122,6 @@ def main() -> int:
         # print(stock_dfs["TSLA"].head())
         # print("\n")
         # print(stock_dfs["AAPL"].tail())
-=======
-      
->>>>>>> 624dead8556fb563eb48d3b9c85cf015086ca48b
-
 
 
         '''
