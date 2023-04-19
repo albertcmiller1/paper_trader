@@ -22,6 +22,7 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 * backtest a trading strategy for a stock 
 * use sns topic to send myself an email each time a new user signs up 
 * change parition of dynamodb to user_id with clustering on timestamp for better performance 
+* write admin tool to generate random transactions 
 
 ## Api endpoints
 * get all stocks a user owns 
