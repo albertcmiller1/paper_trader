@@ -42,6 +42,7 @@ def main() -> int:
             print(value_dfs[df].head()) 
             trader.plot(value_dfs[df], ('value', 'g'))
             # aggregate each of these dataframes 
+            # will need to be careful of dates across different stocks 
             # plot 
 
 
