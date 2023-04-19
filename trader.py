@@ -328,7 +328,6 @@ class Trader:
         
         return stock_dfs
 
-
     def create_value_dataframes(self, stock_dfs, user_transactions) -> dict:
         value_dfs = {}
         for ticker in stock_dfs: 
