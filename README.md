@@ -37,10 +37,3 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 
 ## Notes before you start 
 currently using the yahoo finance [rapidapi](https://rapidapi.com/sparior/api/yahoo-finance15) to get stock data. you will need to get your own api key and update `configuration.yaml`
-
-## dynamodb table
-* transactions table: 
-* schema: (quantity, date, user_id, ticker, price, transaction_type, productId)
-
-## Todo 
-* work on plotting portfolio 

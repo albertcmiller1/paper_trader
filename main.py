@@ -99,6 +99,7 @@ def main() -> int:
             print(stock_dfs[ticker].iloc[ending_row])
             # do a check to ensure both rows were found before proceeding. 
 
+<<<<<<< HEAD
             # how do we trip a dataframe 
 
             print("\n")
@@ -122,6 +123,9 @@ def main() -> int:
         # print(stock_dfs["TSLA"].head())
         # print("\n")
         # print(stock_dfs["AAPL"].tail())
+=======
+      
+>>>>>>> 624dead8556fb563eb48d3b9c85cf015086ca48b
 
 
 
