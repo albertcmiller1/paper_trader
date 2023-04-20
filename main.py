@@ -12,7 +12,7 @@ def main() -> int:
     print(f"welcome {user}!\n")
 
     use_csvs = True
-    list_transactions = False
+    time_intveral = "1d"
     trader = Trader()
 
     if list_portfolio: 
@@ -50,7 +50,8 @@ def main() -> int:
     elif graph_stock: 
         print(f"graphing {graph_stock}...")
         if trader.stock_is_in_csv_files(graph_stock, "1d"):
-            df = trader.get_stock_data_from_csv("stock_csvs/AAPL_1d.csv")
+            file_name = graph_stock + "_" + time_intveral + ".csv"
+            df = trader.get_stock_data_from_csv("stock_csvs/" + file_name.lower())
         else: 
             df = trader.get_and_write_to_csv(graph_stock, '1d')
         df = trader.add_moving_average(df, 50)

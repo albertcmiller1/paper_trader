@@ -288,7 +288,7 @@ class Trader:
             holdings[stock]['portfolio_diversity'] = round((holdings[stock]['market_value'] / total_value) * 100, 2)
         return holdings 
 
-    def get_and_trim_stock_data(self, user, use_csvs) -> dict:
+    def get_and_trim_stock_data(self, user: str, use_csvs: bool) -> dict:
         
         stock_dfs = {}
 
@@ -305,7 +305,7 @@ class Trader:
             if use_csvs: 
                 stock_history_df = trader.get_stock_data_from_csv("./stock_csvs/" + ticker + "_1d.csv")
             else: 
-                stock_history_df = trader.get_stock_data(ticker, "1d")
+                stock_history_df = trader.get_and_write_to_csv(ticker, "1d")
 
             len_txns = len(user_txns_of_x_ticker.index)
             oldest_user_txn_date = user_txns_of_x_ticker.iloc[0]['date'].to_pydatetime()
@@ -401,8 +401,6 @@ class Trader:
         file_name = ticker + "_" + frequency + ".csv"
         if file_name.lower() in dir_list: return True
         return False
-
-
 
 trader = Trader()
 
