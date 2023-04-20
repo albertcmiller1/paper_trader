@@ -27,10 +27,12 @@ def main() -> int:
     elif buy_stock: 
         print(f'attempting to buy {quantity} shares of {buy_stock}')
         if trader.buy_stock(user, buy_stock, quantity): print("success!")
+        else: print("failure...")
         
     elif sell_stock: 
         print(f'attempting to sell {quantity} shares of {sell_stock}')
-        if trader.sell_stock(user, sell_stock, int(quantity)): print('success!')
+        if trader.sell_stock(user, sell_stock, int(quantity)): print('success!') 
+        else: print(':(')
 
     elif graph_portfolio: 
         stock_dfs = trader.get_and_trim_stock_data(user, use_csvs)
@@ -40,14 +42,13 @@ def main() -> int:
         for df in value_dfs: 
             print(df)
             print(value_dfs[df].head()) 
-            trader.plot(value_dfs[df], ('value', 'g'))
             # aggregate each of these dataframes 
             # will need to be careful of dates across different stocks 
             # plot 
+            trader.plot(value_dfs[df], ('value', 'g'))
 
     elif graph_stock: 
         print(f"graphing {graph_stock}...")
-
         if trader.stock_is_in_csv_files(graph_stock, "1d"):
             df = trader.get_stock_data_from_csv("stock_csvs/AAPL_1d.csv")
         else: 

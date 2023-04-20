@@ -14,6 +14,7 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 * `python main.py --user albert --buy_stock AAPL --quantity 1`
 * `python main.py --user albert --sell_stock AAPL --quantity 1`
 * `python main.py --user albert --graph_stock AAPL`
+* `python main.py --user albert --list_txns`
 
 ## Further Ideas 
 * inlude buy/sell strike prices (aws fargate + stock api that suppors websockets)

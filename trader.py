@@ -102,12 +102,20 @@ class Trader:
         '''
         return the current price of a stock
         '''
+        print(f"getting current price for {ticker}")
         url = self.stock_quote_url + "/" + ticker
         response = requests.request("GET", url, headers=self.headers, params=self.querystring)
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"Error attempting to get current stock price: {e}")
+
         curr_stock_data = json.loads(response.text)
-        if curr_stock_data[0]['ask']: return float(curr_stock_data[0]['ask'])
-        print('error getting stock quote')
-        sys.exit()
+        if curr_stock_data[0]['ask'] == 0: 
+            print('current ask price is 0 -- you cannot buy at this time. returning regularMarketPreviousClose price.')
+            return float(curr_stock_data[0]['ask'])
+        else: 
+            return float(curr_stock_data[0]['regularMarketPreviousClose'])
 
     def buy_stock(self, user_id: str, ticker: str, quantity: int) -> bool:
         time = dt.now()
@@ -322,7 +330,6 @@ class Trader:
                 if dt.fromtimestamp(row['date_utc']).date() == oldest_user_txn_date.date():
                     first_user_txn_row = i
 
-     
             stock_history_len = len(stock_history_df.index)
             trimed_df = stock_history_df.iloc[first_user_txn_row:stock_history_len]
             stock_dfs[ticker] = trimed_df 
@@ -341,7 +348,6 @@ class Trader:
             # print(user_txns_of_x_ticker.head(10))
             # print(f"{user} has {len(user_txns_of_x_ticker.index)} transactions for {ticker}")
             # print("\n")
-
 
             user_txn_index = 0
             num_shares = 0
@@ -399,8 +405,6 @@ class Trader:
 
 
 trader = Trader()
-print(trader.stock_is_in_csv_files("AAPL", "1d"))
-
 
 # df = trader.get_stock_data('AAPL', '1d')
 # df = trader.get_and_write_to_csv('SNOW', '1d')
