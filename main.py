@@ -56,8 +56,8 @@ def main() -> int:
    
     elif list_txns: 
         user_transactions = trader.get_user_transactions(user)
-        # find how many rows are in df and use that instead of hardcoding 
-        print(df.head(100))
+        num_user_txns = len(user_transactions.index)
+        print(user_transactions.head(num_user_txns))
    
     else: 
         print('please use the -h or --help option to list out some of the availiable features of this repository.')
@@ -74,7 +74,7 @@ def parse_app_args():
     parser.add_argument("--quantity", help="use this flag to specify how many shares of a stock you would like to buy or sell. must pass in an integer after the flag.")
     parser.add_argument("--graph_portfolio", help="use this flag to graph your current portfolio", action='store_true')
     parser.add_argument("--graph_stock", help="use this flag to graph any stock. must pass in the ticker you would like to see")
-    parser.add_argument("--list_txns", help="use this flag to list all the transactions of a user.")
+    parser.add_argument("--list_txns", help="use this flag to list all the transactions of a user.", action='store_true')
     parser.add_argument("--no_csvs", help="by default, the program will download csvs of the stock data so less api calls will be made. use this flag to prevent downloading csv files and only use the stock api.")
 
     args = parser.parse_args()
