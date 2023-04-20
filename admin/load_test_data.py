@@ -20,7 +20,6 @@ for item in payload:
     response = requests.post(post_url, json = item) # this works when data is all strings
     # response = requests.post(post_url, json = json.loads(item)) # this does not work
     print("\n")
-    print("respone: ")
     print(response.text)
 
 
