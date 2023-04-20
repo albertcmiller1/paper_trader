@@ -1,4 +1,5 @@
 import sys
+import os 
 import requests
 import json
 import uuid
@@ -388,12 +389,17 @@ class Trader:
             value_dfs[ticker] = value_df    
             return value_dfs
 
-
-
+    def stock_is_in_csv_files(self, ticker: str, frequency: str) -> bool: 
+        path = "./stock_csvs/"
+        dir_list = [x.lower() for x in os.listdir(path)]
+        file_name = ticker + "_" + frequency + ".csv"
+        if file_name.lower() in dir_list: return True
+        return False
 
 
 
 trader = Trader()
+print(trader.stock_is_in_csv_files("AAPL", "1d"))
 
 
 # df = trader.get_stock_data('AAPL', '1d')
@@ -414,5 +420,5 @@ trader = Trader()
 
 # trader.plot_(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
 # trader.plot_volume(df)
-# trader.plot(df, ('high', 'g'))
 # print(df.head())
+# trader.plot(df, ('high', 'g'))

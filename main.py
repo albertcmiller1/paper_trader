@@ -45,13 +45,14 @@ def main() -> int:
             # will need to be careful of dates across different stocks 
             # plot 
 
-
     elif graph_stock: 
         print(f"graphing {graph_stock}...")
-        # df = trader.get_from_csv("stock_csvs/AAPL_1d.csv")
-        df = trader.get_stock_data('AAPL', '1d')
+
+        if trader.stock_is_in_csv_files(graph_stock, "1d"):
+            df = trader.get_stock_data_from_csv("stock_csvs/AAPL_1d.csv")
+        else: 
+            df = trader.get_and_write_to_csv(graph_stock, '1d')
         df = trader.add_moving_average(df, 50)
-        # trader.plot_volume(df)
         trader.plot(df, ('high', 'g'), ('low', 'r'), ('50ma', 'b'))
    
     elif list_txns: 
@@ -75,7 +76,7 @@ def parse_app_args():
     parser.add_argument("--graph_portfolio", help="use this flag to graph your current portfolio", action='store_true')
     parser.add_argument("--graph_stock", help="use this flag to graph any stock. must pass in the ticker you would like to see")
     parser.add_argument("--list_txns", help="use this flag to list all the transactions of a user.", action='store_true')
-    parser.add_argument("--no_csvs", help="by default, the program will download csvs of the stock data so less api calls will be made. use this flag to prevent downloading csv files and only use the stock api.")
+    parser.add_argument("--no_csvs", help="by default, the program will download csvs of the stock data so less api calls will be made. use this flag to prevent downloading csv files and only use the stock api.", action='store_true')
 
     args = parser.parse_args()
 
