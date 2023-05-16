@@ -1,4 +1,4 @@
-# trading-with-python
+# Paper Trader
 This repo will allow a user to create a paper portfolio via buying and selling paper stocks. You may also graph any stock, your portfolio, or a trading algorithm. 
 
 ## Features: 
