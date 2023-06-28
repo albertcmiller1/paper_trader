@@ -47,3 +47,5 @@ currently using the yahoo finance [rapidapi](https://rapidapi.com/sparior/api/ya
 * finish graph_portfolio
 * write admin script to generate transactions for testing 
 * write out binary search logic in get_and_trim_stock_data
+
+https://dev.to/radioactive11/real-time-interactive-plotting-using-sockets-python-plotly-297g
