@@ -1,9 +1,4 @@
-import sys
-import os 
-import requests
-import json
-import uuid
-import pprint
+import sys, os, requests, json, uuid, pprint, websocket
 import pandas as pd 
 import matplotlib.pyplot as plt
 from matplotlib import style 
@@ -16,13 +11,9 @@ from matplotlib import dates as mdates
 class Trader: 
     def __init__(self):
         self.conf = Env("configuration.yaml").config
-        self.stock_quote_url = self.conf['rapidapi_quote_url']
-        self.stock_history_url = self.conf['rapidapi_history_url']
-        self.querystring = {"diffandsplits":"false"}
-        self.headers = {
-            "X-RapidAPI-Key": self.conf['rapidapi_api_key'],
-            "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
-        }
+        self.stock_quote_url = self.conf['order_book_api']
+        self.stock_history_url = self.conf['aws_api']
+        self.exchange_is_local = True
 
     def get_stock_data(self, stock: str, time_interval: str) -> pd.DataFrame:
         possibile_intervals = ["5m", "15m", "30m", "1h", "1d", "1wk", "1mo", "3mo"]
@@ -401,6 +392,13 @@ class Trader:
         file_name = ticker + "_" + frequency + ".csv"
         if file_name.lower() in dir_list: return True
         return False
+
+    def stream_live_stock_data(self, ticker: str):
+        print(f"connecting...")
+        def on_message(wsapp, message): 
+            print(f"{message}")
+        wsapp = websocket.WebSocketApp(self.conf['order_book_ws'], on_message=on_message)
+        wsapp.run_forever() 
 
 trader = Trader()
 

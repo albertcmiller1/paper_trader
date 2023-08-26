@@ -15,6 +15,7 @@ mypy = "*"
 boto3 = "*"
 uuid = "*"
 websocket-client = "*"
+singleton-decorator = "*"
 
 [dev-packages]
 

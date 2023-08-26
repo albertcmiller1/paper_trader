@@ -49,3 +49,6 @@ currently using the yahoo finance [rapidapi](https://rapidapi.com/sparior/api/ya
 * write out binary search logic in get_and_trim_stock_data
 
 https://dev.to/radioactive11/real-time-interactive-plotting-using-sockets-python-plotly-297g
+
+need a dynamodb for when the orderbook executes a match 
+need a dynamodb for when a user

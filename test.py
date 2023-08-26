@@ -1,7 +1,7 @@
-import requests
-import json
-import websocket
+import requests, json, websocket
+
 # https://websocket-client.readthedocs.io/en/latest/examples.html
+
 ws = websocket.WebSocket()
 
 def get_curr_price():
