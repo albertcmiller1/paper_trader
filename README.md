@@ -32,13 +32,9 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 * dynamodb schema: (user, stock_ticker, buy_date, price, transaction_type, quantity) 
 
 ## To get started clone the repo and run 
-
 * `pipenv shell`
 * `pipenv install`
 * `python main.py --help`
-
-## Notes before you start 
-currently using the yahoo finance [rapidapi](https://rapidapi.com/sparior/api/yahoo-finance15) to get stock data. you will need to get your own api key and update `configuration.yaml`
 
 ## Todo
 * clean up comments / logs
@@ -50,5 +46,9 @@ currently using the yahoo finance [rapidapi](https://rapidapi.com/sparior/api/ya
 
 https://dev.to/radioactive11/real-time-interactive-plotting-using-sockets-python-plotly-297g
 
-need a dynamodb for when the orderbook executes a match 
-need a dynamodb for when a user
+TODO current: 
+* integrate a way to post to a api with cpp
+* update lambda function to take incoming matches from the orderboook 
+* update lambda function to take incoming price data from the orderbook 
+* create a dynamo table of stock data 
+* create GUI to plot live prices, live portfolio, and place trades 

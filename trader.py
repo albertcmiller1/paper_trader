@@ -113,16 +113,26 @@ class Trader:
         date_time_str = time.strftime('%m/%d/%Y %H:%M:%S')
         post_url = self.conf['aws_api'] + '/product'
         txn_id = str(uuid.uuid4())
-        curr_price = self.get_current_price(ticker)
+        # curr_price = self.get_current_price(ticker)
+
+        # payload = {
+        #     "productId": txn_id,
+        #     "user_id": user_id, 
+        #     "ticker": ticker, 
+        #     "quantity": int(quantity), 
+        #     "date": date_time_str, 
+        #     "transaction_type": "buy", 
+        #     "price": str(curr_price)
+        # }
 
         payload = {
             "productId": txn_id,
-            "user_id": user_id, 
-            "ticker": ticker, 
-            "quantity": int(quantity), 
+            "user_id": "albert", 
+            "ticker": "FORD", 
+            "quantity": 5, 
             "date": date_time_str, 
             "transaction_type": "buy", 
-            "price": str(curr_price)
+            "price": "69.69"
         }
 
         response = requests.post(post_url, json = payload)
@@ -328,9 +338,12 @@ class Trader:
         return stock_dfs
 
     def create_value_dataframes(self, stock_dfs, user_transactions) -> dict:
+        '''
+        calculate the value and provits of your protfolio over time given a datafram of user transactions and historical stock data 
+        '''
         value_dfs = {}
         for ticker in stock_dfs: 
-            print(f"calculating value and profits for {ticker}")
+            print(f"calculating current value and profits for {ticker}")
 
             value_df = pd.DataFrame()
 

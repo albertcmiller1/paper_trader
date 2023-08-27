@@ -8,9 +8,9 @@ from singleton_decorator import singleton
 @singleton
 class Args: 
     user: str
-    list_portfolio: bool
-    buy_stock: str
-    sell_stock: str
+    portfolio: bool
+    buy: str
+    sell: str
     quantity: int 
     graph_portfolio: bool
     graph_stock: str 
@@ -30,7 +30,7 @@ def main() -> int:
     time_intveral = "1d"
     trader = Trader()
 
-    if Args.list_portfolio: 
+    if Args.portfolio: 
         user_transactions: pd.DataFrame = trader.get_user_transactions(Args.user)
         if user_transactions.empty: 
             print(f"{Args.user} does not have any stocks yet!")
@@ -39,15 +39,15 @@ def main() -> int:
         print('holdings: ')
         pprint.pprint(user_holdings)
 
-    elif Args.buy_stock: 
-        print(f'attempting to buy {Args.quantity} shares of {Args.buy_stock}')
-        if trader.buy_stock(Args.user, Args.buy_stock, Args.quantity): print("success!")
-        else: print("failure...")
+    elif Args.buy: 
+        print(f'attempting to buy {Args.quantity} shares of {Args.buy}')
+        if trader.buy_stock(Args.user, Args.buy, Args.quantity): print("success!")
+        else: print("unable to post buy order")
         
-    elif Args.sell_stock: 
-        print(f'attempting to sell {Args.quantity} shares of {Args.sell_stock}')
-        if trader.sell_stock(Args.user, Args.sell_stock, int(Args.quantity)): print('success!') 
-        else: print(':(')
+    elif Args.sell: 
+        print(f'attempting to sell {Args.quantity} shares of {Args.sell}')
+        if trader.sell(Args.user, Args.sell, int(Args.quantity)): print('success!') 
+        else: print('unable to post sell order.')
 
     elif Args.stream: 
         print(f"starting to stream {Args.stream} from orderbook")
@@ -55,6 +55,7 @@ def main() -> int:
 
 
     elif Args.graph_portfolio: 
+        # TODO: get user transactions first, then trip based on a range of dates. 
         stock_dfs = trader.get_and_trim_stock_data(Args.user, use_csvs)
         user_transactions = trader.get_user_transactions(Args.user) 
         value_dfs = trader.create_value_dataframes(stock_dfs, user_transactions)
@@ -95,17 +96,17 @@ def set_app_args():
     parser.add_argument("--no_csvs", help="by default, the program will download csvs of the stock data so less api calls will be made. use this flag to prevent downloading csv files and only use the stock api.", action='store_true')
     parser.add_argument("--quantity", help="use this flag to specify how many shares of a stock you would like to buy or sell. must pass in an integer after the flag.")
     parser.add_argument("--list_txns", help="use this flag to list all the transactions of a user.", action='store_true')
-    parser.add_argument("--buy_stock", help="use this flag to buy a stock. must pass in the ticker after the flag")
+    parser.add_argument("--buy", help="use this flag to buy a stock. must pass in the ticker after the flag")
     parser.add_argument("--curr_price", help="use this flag to return the current trading price of a stock. must pass in the ticker after the flag.")
-    parser.add_argument("--sell_stock", help="use this flag to sell a stock. must pass in the ticker after the flag")
+    parser.add_argument("--sell", help="use this flag to sell a stock. must pass in the ticker after the flag")
     parser.add_argument("--graph_stock", help="use this flag to graph any stock. must pass in the ticker you would like to see")
-    parser.add_argument("--list_portfolio", help="use this flag to list out what socks you currently own and how much they are worth", action='store_true') 
+    parser.add_argument("--portfolio", help="use this flag to list out what socks you currently own and how much they are worth", action='store_true') 
     parser.add_argument("--graph_portfolio", help="use this flag to graph your current portfolio", action='store_true')
 
     args = parser.parse_args()
 
-    if args.buy_stock or args.sell_stock or args.quantity: 
-        if not ((args.buy_stock and args.quantity) or (args.sell_stock and args.quantity)): 
+    if args.buy or args.sell or args.quantity: 
+        if not ((args.buy and args.quantity) or (args.sell and args.quantity)): 
             print("if you're buying or selling a stock, you must specify a ticker and quantity")
             sys.exit()
 
@@ -113,10 +114,10 @@ def set_app_args():
     Args.stream = args.stream
     Args.quantity = args.quantity
     Args.list_txns = args.list_txns
-    Args.buy_stock = args.buy_stock
-    Args.sell_stock = args.sell_stock
+    Args.buy = args.buy
+    Args.sell = args.sell
     Args.graph_stock = args.graph_stock
-    Args.list_portfolio = args.list_portfolio
+    Args.portfolio = args.portfolio
     Args.graph_portfolio = args.graph_portfolio
 
 if __name__ == "__main__": 
