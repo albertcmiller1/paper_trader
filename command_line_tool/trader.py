@@ -36,7 +36,7 @@ class Trader:
         print(j)
 
     def place_order(self, price, shares, order_type, user_id):
-        url = "http://0.0.0.0:5001/place_order"
+        url = self.conf["local"]["api"]["place_order_route"]
 
         myobj = {
             'price': price,

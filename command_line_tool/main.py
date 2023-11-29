@@ -5,7 +5,6 @@ def main():
     args = set_app_args()
     trader = Trader()
 
-
     if args.stream_matches: 
         trader.stream_matches(args.stream_matches)
 

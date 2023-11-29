@@ -40,9 +40,6 @@ def set_app_args():
 
 
     args = parser.parse_args()
-    # TODO: https://www.allaboutcircuits.com/textbook/digital/chpt-7/circuit-simplification-examples/
-    # TODO: need to add a limit to this 
-
     if (args.buy or args.sell or args.quantity) and not (args.quantity and (args.buy or args.sell) and args.price): 
         print("if you're buying or selling a stock, you must specify a ticker, quantity and purchace price")
         sys.exit()
