@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import style 
 import datetime as dt 
-from parse_conf import Env
+from old_stuff.parse_conf import Env
 from datetime import datetime as dt
 from matplotlib import dates as mdates
 

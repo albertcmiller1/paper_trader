@@ -1,0 +1,8 @@
+local: 
+  api: 
+    place_order_route: "http://0.0.0.0:5001/place_order"
+    cancel_order_route: "cancel_order"
+    order_status_route: "order_status"
+  ws: 
+    matches: "ws://0.0.0.0:5001/matches"
+

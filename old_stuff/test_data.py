@@ -3,7 +3,7 @@ import boto3
 import random
 import pprint
 import requests
-from trader import Trader
+from old_stuff.trader import Trader
 
 num_txns = 10
 user_id = "trent"

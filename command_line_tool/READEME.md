@@ -1,0 +1,1 @@
+`python main.py --user albert --buy AAPL --quantity 5`

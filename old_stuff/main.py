@@ -1,7 +1,7 @@
 import argparse, sys, pprint 
 import pandas as pd
-from trader import Trader
-from parse_conf import Env
+from old_stuff.trader import Trader
+from old_stuff.parse_conf import Env
 from datetime import datetime as dt
 from singleton_decorator import singleton
 
@@ -28,6 +28,9 @@ def main() -> int:
     trader = Trader()
 
     if Args.portfolio: 
+        '''
+        show the portfolio of stocks a user holds
+        '''
         user_transactions: pd.DataFrame = trader.get_user_transactions(Args.user)
         if user_transactions.empty: 
             print(f"{Args.user} does not have any stocks yet!")
@@ -37,11 +40,17 @@ def main() -> int:
         pprint.pprint(user_holdings)
 
     elif Args.buy: 
+        '''
+        buy N shares of a stock 
+        '''
         print(f'attempting to buy {Args.quantity} shares of {Args.buy}')
         if trader.buy_stock(Args.user, Args.buy, Args.quantity): print("success!")
         else: print("unable to post buy order")
         
     elif Args.sell: 
+        '''
+        sell N shares of a stock 
+        '''
         print(f'attempting to sell {Args.quantity} shares of {Args.sell}')
         if trader.sell_stock(Args.user, Args.sell, int(Args.quantity)): print('success!') 
         else: print('unable to post sell order.')
@@ -110,15 +119,15 @@ def set_app_args():
         print("if you're buying or selling a stock, you must specify a ticker and quantity")
         sys.exit()
 
-    Args.buy = args.buy
-    Args.sell = args.sell
-    Args.user = args.user
-    Args.stream = args.stream
-    Args.quantity = args.quantity
-    Args.list_txns = args.list_txns
-    Args.portfolio = args.portfolio
-    Args.graph_stock = args.graph_stock
-    Args.graph_portfolio = args.graph_portfolio
+    Args.buy                = args.buy
+    Args.sell               = args.sell
+    Args.user               = args.user
+    Args.stream             = args.stream
+    Args.quantity           = args.quantity
+    Args.list_txns          = args.list_txns
+    Args.portfolio          = args.portfolio
+    Args.graph_stock        = args.graph_stock
+    Args.graph_portfolio    = args.graph_portfolio
 
     print(f"welcome {Args.user}!\n")
     return 
