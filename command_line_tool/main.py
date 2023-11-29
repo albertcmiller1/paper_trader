@@ -3,11 +3,15 @@ from trader import Trader
 
 import requests, json, websocket, ast
 
-
 def main(): 
-    # args = set_app_args()
+    args = set_app_args()
     trader = Trader()
-    trader.stream_matches()
+
+    if args.stream_matches: 
+        trader.stream_matches(args.stream_matches)
+
+    if args.stream_spread: 
+        trader.stream_spread(args.stream_spread)
 
     return 
 
