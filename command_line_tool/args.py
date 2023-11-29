@@ -6,6 +6,7 @@ class Args:
     buy: str
     user: str
     sell: str
+    price: float
     no_csvs: bool 
     quantity: int 
     portfolio: bool
@@ -26,6 +27,7 @@ def set_app_args():
     parser.add_argument("--buy",                help="use this flag to buy a stock. must pass in the ticker after the flag")
     parser.add_argument("--sell",               help="use this flag to sell a stock. must pass in the ticker after the flag")
     parser.add_argument("--user",               help="use this flag to tell the program your user_id. this is needed to track which stocks you own.", required=True)
+    parser.add_argument("--price",              help="use this flag to specify how many shares of a stock you would like to buy or sell. must pass in an integer after the flag.")
     parser.add_argument("--no_csvs",            help="by default, the program will download csvs of the stock data so less api calls will be made. use this flag to prevent downloading csv files and only use the stock api.", action='store_true')
     parser.add_argument("--quantity",           help="use this flag to specify how many shares of a stock you would like to buy or sell. must pass in an integer after the flag.")
     parser.add_argument("--portfolio",          help="use this flag to list out what socks you currently own and how much they are worth", action='store_true') 
@@ -39,13 +41,16 @@ def set_app_args():
 
     args = parser.parse_args()
     # TODO: https://www.allaboutcircuits.com/textbook/digital/chpt-7/circuit-simplification-examples/
-    if (args.buy or args.sell or args.quantity) and not (args.quantity and (args.buy or args.sell)): 
-        print("if you're buying or selling a stock, you must specify a ticker and quantity")
+    # TODO: need to add a limit to this 
+
+    if (args.buy or args.sell or args.quantity) and not (args.quantity and (args.buy or args.sell) and args.price): 
+        print("if you're buying or selling a stock, you must specify a ticker, quantity and purchace price")
         sys.exit()
 
     Args.buy                = args.buy
     Args.sell               = args.sell
     Args.user               = args.user
+    Args.price              = args.price
     Args.stream_matches     = args.stream_matches
     Args.stream_spread      = args.stream_spread
     Args.quantity           = args.quantity

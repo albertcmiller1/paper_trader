@@ -1,6 +1,5 @@
 import requests, json, websocket, ast
 
-# https://websocket-client.readthedocs.io/en/latest/examples.html
 
 
 def place_order(price, shares, order_type, user_id):

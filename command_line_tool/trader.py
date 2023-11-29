@@ -35,4 +35,16 @@ class Trader:
         j = json.loads(response.text)
         print(j)
 
-    
+    def place_order(self, price, shares, order_type, user_id):
+        url = "http://0.0.0.0:5001/place_order"
+
+        myobj = {
+            'price': price,
+            'shares': shares,
+            'order_type': order_type,
+            'user_id': user_id
+        }
+
+        response = requests.post(url, json = myobj)
+        res_dict = json.loads(response.text)
+        print(res_dict)
