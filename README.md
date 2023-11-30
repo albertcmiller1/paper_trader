@@ -52,3 +52,9 @@ TODO current:
 * update lambda function to take incoming price data from the orderbook 
 * create a dynamo table of stock data 
 * create GUI to plot live prices, live portfolio, and place trades 
+
+
+## frontend sockets 
+* https://blog.logrocket.com/websocket-tutorial-real-time-node-react/
+* https://www.npmjs.com/package/react-use-websocket
+* https://www.youtube.com/watch?v=azvcvbeRZ08&ab_channel=WebDevCody

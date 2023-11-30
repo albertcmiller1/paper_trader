@@ -7,6 +7,7 @@ local:
   ws: 
     matches: "ws://0.0.0.0:5001/matches"
     spread:  "ws://0.0.0.0:5001/spread"
+    curr_price:  "ws://0.0.0.0:5001/price"
 
 aws: 
   historical_prices: "foobar"
