@@ -1,12 +1,29 @@
 import './App.css';
 import React, { useState, useCallback, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import CanvasJSReact from '@canvasjs/react-charts';
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const WS_URL = 'ws://0.0.0.0:5001/price';
 
 function App() {
   
-  const [messageHistory, setMessageHistory] = useState([]);
+const [messageHistory, setMessageHistory] = useState([]);
+
+
+  const options = {
+    theme: 'dark',
+    animationEnabled: true,
+    title: {
+      text: 'Live price data streaming from the order book',
+    },
+    data: [
+      {
+        type: 'line',
+        dataPoints: messageHistory
+      },
+    ],
+  }
 
   const {
     sendMessage,
@@ -21,29 +38,26 @@ function App() {
     shouldReconnect: (closeEvent) => false,
   });
 
-
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
+        var idx = messageHistory.length
+        var newData = { x: idx, y: parseFloat(lastMessage.data) }
+        setMessageHistory(messageHistory => [...messageHistory, newData]);
 
-      let i = 0;
-      console.log("--------", messageHistory.length)
-      while (i < messageHistory.length) {
-          console.log(messageHistory[i].data);
-          i++;
-      }
+        // let i = 0;
+        // console.log("--------", messageHistory.length)
+        // while (i < messageHistory.length) {
+        //     console.log(messageHistory[i]);
+        //     i++;
+        // }
     }
   }, [lastMessage, setMessageHistory]);
 
+
   return (
     <div className="App">
-     hello world
-
-     <ul>
-        {messageHistory.map((message, idx) => (
-          <span key={idx}>{message ? message.data : null}</span>
-        ))}
-      </ul>
+     <h1>Paper Trader</h1>
+     <CanvasJSChart options={options} />
     </div>
   );
 }

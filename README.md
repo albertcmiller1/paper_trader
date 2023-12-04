@@ -47,14 +47,34 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 https://dev.to/radioactive11/real-time-interactive-plotting-using-sockets-python-plotly-297g
 
 TODO current: 
-* integrate a way to post to a api with cpp
+* create different pages for react app 
+* create a dynamo table for historical prices 
+* create a table for all user transactions 
+* create buy/sell endpoints for paper trader API 
+
+
+
 * update lambda function to take incoming matches from the orderboook 
 * update lambda function to take incoming price data from the orderbook 
 * create a dynamo table of stock data 
 * create GUI to plot live prices, live portfolio, and place trades 
 
 
+## backend API 
+### dependencies 
+`pip3 install flask`
+
+### start server 
+`flask --app server run`
+
+### conect 
+`curl http://127.0.0.1:5000`
+
+
+
+
 ## frontend sockets 
 * https://blog.logrocket.com/websocket-tutorial-real-time-node-react/
 * https://www.npmjs.com/package/react-use-websocket
 * https://www.youtube.com/watch?v=azvcvbeRZ08&ab_channel=WebDevCody
+* https://vishwas-r.medium.com/how-to-use-canvasjs-react-charts-in-react-funcitonal-component-49edf22b632f
