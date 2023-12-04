@@ -1,63 +1,26 @@
-import './App.css';
-import React, { useState, useCallback, useEffect } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
-import CanvasJSReact from '@canvasjs/react-charts';
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const WS_URL = 'ws://0.0.0.0:5001/price';
+import React from 'react';
+import { Routes, Route} from 'react-router-dom';
 
-function App() {
-  
-const [messageHistory, setMessageHistory] = useState([]);
+import Navigation     from './components/Navbar'
+import HomePage       from './pages/HomePage';
+import PlotPage       from './pages/PlotPage';
+import TradePage      from './pages/TradePage';
+import PortfolioPage  from './pages/PortfolioPage';
+import NotFoundPage   from './pages/NotFoundPage';
 
-
-  const options = {
-    theme: 'dark',
-    animationEnabled: true,
-    title: {
-      text: 'Live price data streaming from the order book',
-    },
-    data: [
-      {
-        type: 'line',
-        dataPoints: messageHistory
-      },
-    ],
-  }
-
-  const {
-    sendMessage,
-    sendJsonMessage,
-    lastMessage,
-    lastJsonMessage,
-    readyState,
-    getWebSocket,
-  } = useWebSocket(WS_URL, {
-    onOpen: () => console.log('opened'),
-    // Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: (closeEvent) => false,
-  });
-
-  useEffect(() => {
-    if (lastMessage !== null) {
-        var idx = messageHistory.length
-        var newData = { x: idx, y: parseFloat(lastMessage.data) }
-        setMessageHistory(messageHistory => [...messageHistory, newData]);
-
-        // let i = 0;
-        // console.log("--------", messageHistory.length)
-        // while (i < messageHistory.length) {
-        //     console.log(messageHistory[i]);
-        //     i++;
-        // }
-    }
-  }, [lastMessage, setMessageHistory]);
-
-
+const App = () => {
   return (
-    <div className="App">
-     <h1>Paper Trader</h1>
-     <CanvasJSChart options={options} />
+    <div>
+      <Navigation/>
+      <Routes>
+        <Route index                element={<HomePage/>}/>
+        <Route path="/home"         element={<HomePage/>}/>
+        <Route path="/plot"         element={<PlotPage/>}/>
+        <Route path="/trade"        element={<TradePage/>}/>
+        <Route path="/portfolio"    element={<PortfolioPage/>}/>
+        <Route path="*"             element={<NotFoundPage/>}/>
+      </Routes>
     </div>
   );
 }
