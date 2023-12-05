@@ -8,3 +8,9 @@
 
 ### docs 
 https://websocket-client.readthedocs.io/en/latest/examples.html
+
+
+
+# server 
+### start server 
+`flask --app server run`

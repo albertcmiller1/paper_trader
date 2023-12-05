@@ -1,5 +1,5 @@
 from conf import Env
-import requests, json, websocket, ast, pprint
+import requests, json, websocket, ast, pprint, boto3
 
 class Trader: 
     def __init__(self):
@@ -48,3 +48,29 @@ class Trader:
         response = requests.post(url, json = myobj)
         res_dict = json.loads(response.text)
         print(res_dict)
+
+    def get_price_history(self):
+        table_name = "price_history"
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table(table_name)
+        response = table.scan()
+        items = response['Items']
+        num_extentions = 0
+        while 'LastEvaluatedKey' in response:
+            num_extentions +=1 
+            pprint.pprint(response['LastEvaluatedKey'])
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items.extend(response['Items'])
+
+
+        # pprint.pprint(items)
+        print("\n")
+        print(len(items))
+        print(num_extentions)
+
+        return items
+
+
+if __name__ == "__main__": 
+    trader = Trader()
+    trader.get_price_history()

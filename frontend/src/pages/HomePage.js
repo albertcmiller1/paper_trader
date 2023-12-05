@@ -1,8 +1,7 @@
 import React from "react";
- 
 import LiveChart from '../charts/LiveChart';
 
-const HomePage = () => {
+const HomePage = (props) => {
     return (
         <div>
             <center>
@@ -10,7 +9,7 @@ const HomePage = () => {
                 Paper Trader | Home
             </h1>
             </center>
-            <LiveChart/>
+            <LiveChart liveData = {props.liveStockData}/>
         </div>
     );
 };

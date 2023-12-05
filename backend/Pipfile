@@ -9,6 +9,7 @@ pyyaml = "*"
 websocket-client = "*"
 requests = "*"
 flask = "*"
+flask-cors = "*"
 
 [dev-packages]
 
