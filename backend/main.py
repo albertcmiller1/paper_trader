@@ -11,9 +11,11 @@ def main():
     if args.stream_spread: 
         trader.stream_spread(args.stream_spread)
 
+    # works
     if args.buy: 
         trader.place_order(float(args.price), int(args.quantity), "buy", args.user)
 
+    # works 
     if args.sell: 
         trader.place_order(float(args.price), int(args.quantity), "sell", args.user)
 

@@ -17,7 +17,6 @@ class Args:
     stream_matches: str 
     graph_portfolio: bool
 
-
 def set_app_args(): 
     if not sys.argv[1:]: 
         print("please use the -h or --help option to get started\n")

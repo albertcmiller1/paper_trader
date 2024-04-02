@@ -2,16 +2,28 @@
 This repo will allow a user to create a paper portfolio via buying and selling paper stocks. You may also graph any stock, your portfolio, or a trading algorithm. 
 
 ## Features: 
-* buy and sell paper stocks with api (hosted via AWS SAM, api gateway, lambda, dynamodb)
+* stream data from the order book 
+* buy and sell paper stocks
 * view portfolio 
 * graph portfolio over time 
 * graph any stock 
 * graph any stock with moving averages 
 * download csv files of any stock 
-    
+
+### Note
+* You must start the backend before the frontend will have full functionality
+
+## Frontend 
+* Create React App with CanvasJS charts
+* `cd frontend && npm start`
+
+## Backend
+
 ## Examples 
 * `python main.py --user albert --list_portfolio`
-* `python main.py --user albert --buy_stock AAPL --quantity 1`
+* `python3 main.py --user albert --buy AAPL --quantity 1 --price 101`
+
+
 * `python main.py --user albert --sell_stock AAPL --quantity 1`
 * `python main.py --user albert --graph_stock AAPL`
 * `python main.py --user albert --list_txns`
