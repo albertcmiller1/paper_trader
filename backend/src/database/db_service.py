@@ -1,5 +1,6 @@
 import sqlite3
-from schemas import PRICE_HISTORY_DB, MATCH_HISTORY_DB
+# from models import Match, Price
+# from schemas import PRICE_HISTORY_DB, MATCH_HISTORY_DB
 '''
 https://www.tutorialspoint.com/sqlite/sqlite_python.htm
 '''
@@ -13,8 +14,8 @@ class Price:
 class Match: 
     def __init__(self, 
         match_id: int,
-        buyer_order_id: int,
-        seller_order_id: int,
+        buyer_order_id: str,
+        seller_order_id: str,
         sale_quantity: int, 
         sale_price: float,
     ):
@@ -23,6 +24,33 @@ class Match:
         self.seller_order_id = seller_order_id
         self.sale_quantity = sale_quantity
         self.sale_price = sale_price
+
+PRICE_HISTORY_DB = (
+    "price_history.db",
+    '''
+        CREATE TABLE IF NOT EXISTS PRICE_HISTORY
+        (
+            TIME INT PRIMARY KEY   NOT NULL,
+            TICKER           TEXT  NOT NULL,
+            PRICE            INT   NOT NULL
+        );
+    '''
+)
+
+MATCH_HISTORY_DB = (
+    "match_history.db",
+    '''
+        CREATE TABLE IF NOT EXISTS MATCH_HISTORY
+        (
+            MATCH_ID INT PRIMARY KEY     NOT NULL,
+            BUYER_ORDER_ID               TEXT    NOT NULL,
+            SELLER_ORDER_ID              TEXT    NOT NULL,
+            SALE_QUANTITY                INT     NOT NULL,
+            SALE_PRICE                   INT     NOT NULL
+        );
+    '''
+)
+
 
 class DB_Service: 
     def __init__(self):
@@ -33,7 +61,7 @@ class DB_Service:
         }
 
     def create_all_tables(self):
-        for table_name, schema in [MATCH_HISTORY_DB]:
+        for table_name, schema in [PRICE_HISTORY_DB, MATCH_HISTORY_DB]:
             self.create_table(table_name, schema)
 
     def create_table(self, table_name, schema):
@@ -56,7 +84,7 @@ class DB_Service:
         if isinstance(insertion_obj, Price):
             return "price_history.db", f"INSERT INTO PRICE_HISTORY (TIME,TICKER,PRICE) VALUES ({insertion_obj.time}, '{insertion_obj.ticker}', {insertion_obj.price})"
         elif isinstance(insertion_obj, Match):
-            return "match_history.db", f"INSERT INTO MATCH_HISTORY (MATCH_ID,BUYER_ORDER_ID,SELLER_ORDER_ID,SALE_QUANTITY,SALE_PRICE) VALUES ({insertion_obj.match_id}, {insertion_obj.buyer_order_id}, {insertion_obj.seller_order_id}, {insertion_obj.sale_quantity}, {insertion_obj.sale_price})"
+            return "match_history.db", f"INSERT INTO MATCH_HISTORY (MATCH_ID,BUYER_ORDER_ID,SELLER_ORDER_ID,SALE_QUANTITY,SALE_PRICE) VALUES ({insertion_obj.match_id}, '{insertion_obj.buyer_order_id}', '{insertion_obj.seller_order_id}', {insertion_obj.sale_quantity}, {insertion_obj.sale_price})"
         else: 
             raise ValueError(f"Unknown object type: {type(insertion_obj)}")
 
@@ -79,12 +107,12 @@ class DB_Service:
 if __name__ == "__main__":
     db = DB_Service()
 
-    # p1 = Price(123122242, "AAPL", 100)
-    # p2 = Price(12346, "AAPL", 199)
-    # db.insert(p1)
-    # db.insert(p2)
-    # db.select("PRICE_HISTORY")
+    p1 = Price(123122242, "AAPL", 100)
+    p2 = Price(12346, "AAPL", 199)
+    db.insert(p1)
+    db.insert(p2)
+    db.select("PRICE_HISTORY")
 
-    # m1 = Match(123, 223, 5235, 2, 100.2)
-    # db.insert(m1)
-    # db.select("MATCH_HISTORY")
+    m1 = Match(123, '02ed979a1f', '1f08f10fe6', 2, 100.2)
+    db.insert(m1)
+    db.select("MATCH_HISTORY")

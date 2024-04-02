@@ -1,4 +1,4 @@
-from conf import Env
+from configs.conf import Env
 import requests, json, websocket, ast, pprint, boto3
 
 class Trader: 
