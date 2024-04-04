@@ -1,3 +1,9 @@
+class Price: 
+    def __init__(self, time, ticker, price):
+        self.time = time 
+        self.ticker = ticker
+        self.price = price
+
 class Match: 
     def __init__(self, 
         match_id: int,
@@ -11,9 +17,3 @@ class Match:
         self.seller_order_id = seller_order_id
         self.sale_quantity = sale_quantity
         self.sale_price = sale_price
-
-class Price: 
-    def __init__(self, time, ticker, price):
-        self.time = time 
-        self.ticker = ticker
-        self.price = price

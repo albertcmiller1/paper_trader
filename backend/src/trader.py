@@ -3,7 +3,7 @@ import requests, json, websocket, ast, pprint, boto3
 
 class Trader: 
     def __init__(self):
-        self.conf = Env("conf.yaml").config
+        self.conf = Env("./configs/conf.yaml").config
     
     def stream_matches(self, ticker): 
         print(f"start streaming matches for {ticker}\n")
@@ -29,6 +29,14 @@ class Trader:
         wsapp = websocket.WebSocketApp(ws_url, on_message=on_message)
         wsapp.run_forever() 
 
+    def stream_curr_price(self, ticker): 
+        print(f"start streaming current price for {ticker}\n")
+        def on_message(wsapp, message):
+            print(message)
+        ws_url = self.conf["local"]["ws"]["curr_price"]
+        wsapp = websocket.WebSocketApp(ws_url, on_message=on_message)
+        wsapp.run_forever() 
+
     def get_curr_price(self):
         url = self.conf["local"]["api"]["current_price"]
         response = requests.request("GET", url)
@@ -50,26 +58,7 @@ class Trader:
         print(res_dict)
 
     def get_price_history(self):
-        table_name = "price_history"
-        dynamodb = boto3.resource('dynamodb')
-        table = dynamodb.Table(table_name)
-        response = table.scan()
-        items = response['Items']
-        num_extentions = 0
-        while 'LastEvaluatedKey' in response:
-            num_extentions +=1 
-            pprint.pprint(response['LastEvaluatedKey'])
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            items.extend(response['Items'])
-
-
-        # pprint.pprint(items)
-        print("\n")
-        print(len(items))
-        print(num_extentions)
-
-        return items
-
+        pass
 
 if __name__ == "__main__": 
     trader = Trader()

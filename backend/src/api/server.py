@@ -1,18 +1,21 @@
 from flask import Flask
-from trader import Trader
 from flask_cors import CORS
-import json 
+import sys, json 
+sys.path.append("..")
+from database.db_service import DB_Service
 
 app = Flask(__name__)
 CORS(app)
-
-trader = Trader()
+db = DB_Service()
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "Hello, World!"
 
 @app.route("/prices")
 def get_all_prices():
-    return json.loads(trader.get_price_history())
+    return db.select("PRICE_HISTORY")
 
+@app.route("/matches")
+def get_all_matches():
+    return db.select("MATCH_HISTORY")

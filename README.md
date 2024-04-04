@@ -15,18 +15,21 @@ This repo will allow a user to create a paper portfolio via buying and selling p
 
 ## Frontend 
 * Create React App with CanvasJS charts
-* `cd frontend && npm start`
+* `cd frontend`
+* `npm install`
+* `npm start`
 
 ## Backend
 
 ## Examples 
-* `python main.py --user albert --list_portfolio`
-* `python3 main.py --user albert --buy AAPL --quantity 1 --price 101`
-
-
-* `python main.py --user albert --sell_stock AAPL --quantity 1`
-* `python main.py --user albert --graph_stock AAPL`
-* `python main.py --user albert --list_txns`
+* `python main.py --user albert --curr_price AAPL`
+* `python main.py --user albert --buy AAPL --quantity 1 --price 101`
+* `python main.py --user albert --sell AAPL --quantity 1 --price 101`
+* `python main.py --user albert --stream_matches AAPL`
+* `python main.py --user albert --stream_spread AAPL`
+* `python main.py --user albert --list_txns AAPL`
+* `python main.py --user albert --price_history AAPL`
+* `python main.py --user albert --stream_price AAPL`
 
 ## Further Ideas 
 * inlude buy/sell strike prices (aws fargate + stock api that suppors websockets)
@@ -83,7 +86,7 @@ TODO current:
 `curl http://127.0.0.1:5000`
 
 
-
+https://www.tutorialspoint.com/sqlite/sqlite_python.htm
 
 ## frontend sockets 
 * https://blog.logrocket.com/websocket-tutorial-real-time-node-react/
