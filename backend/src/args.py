@@ -1,23 +1,5 @@
 import argparse, sys
-from singleton_decorator import singleton
-
-@singleton
-class Args: 
-    buy: str
-    user: str
-    sell: str
-    price: float
-    no_csvs: bool 
-    quantity: int 
-    portfolio: bool
-    list_txns: bool 
-    curr_price: str 
-    graph_stock: str 
-    stream_price: str
-    stream_spread: str 
-    stream_matches: str 
-    graph_portfolio: bool
-    price_history: bool 
+from models import Args
 
 def set_app_args(): 
     if not sys.argv[1:]: 
