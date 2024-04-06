@@ -23,7 +23,7 @@ class Order:
         self.price = price
         self.quantity = quantity
         self.order_type = order_type
-        self.user = user_id
+        self.user_id = user_id
 
 class Args: 
     price: float
@@ -41,3 +41,5 @@ class Args:
     portfolio: bool
     price_history: bool 
     graph_portfolio: bool
+    post_prices: str
+    post_matches: str

@@ -13,9 +13,7 @@ import NotFoundPage   from './pages/NotFoundPage';
 const WS_URL = 'ws://0.0.0.0:5001/price';
 
 const App = () => {
-  
   const [messageHistory, setMessageHistory] = useState([]); 
-
   const {
       sendMessage,
       sendJsonMessage,
@@ -37,7 +35,6 @@ const App = () => {
           setMessageHistory(messageHistory => [...messageHistory, newData]);
       }
   }, [lastMessage, setMessageHistory]);
-
 
   return (
     <div>

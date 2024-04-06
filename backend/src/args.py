@@ -18,11 +18,12 @@ def set_app_args():
     parser.add_argument("--list_txns",          help="use this flag to list all the transactions of a user. must pass in the ticker after the flag.")
     parser.add_argument("--price_history",      help="use this flag to list all the transactions of a user. must pass in the ticker after the flag.")
     parser.add_argument("--stream_price",       help="use this flag to create a socket connection to the orderbook. must pass in the ticker after the flag.")
+    parser.add_argument("--post_matches",       help="use this flag to post streamed matches into the local db. must pass in the ticker after the flag.")
+    parser.add_argument("--post_prices",        help="use this flag to post streamed prices into the local db. must pass in the ticker after the flag.")
     
     parser.add_argument("--portfolio",          help="use this flag to list out what socks you currently own and how much they are worth", action='store_true') 
     parser.add_argument("--graph_stock",        help="use this flag to graph any stock. must pass in the ticker you would like to see")
     parser.add_argument("--graph_portfolio",    help="use this flag to graph your current portfolio", action='store_true')
-    parser.add_argument("--no_csvs",            help="by default, the program will download csvs of the stock data so less api calls will be made. use this flag to prevent downloading csv files and only use the stock api.", action='store_true')
 
     args = parser.parse_args()
     if (args.buy or args.sell or args.quantity) and not (args.quantity and (args.buy or args.sell) and args.price): 
@@ -30,6 +31,8 @@ def set_app_args():
         sys.exit()
 
     Args.buy                = args.buy
+    Args.post_matches       = args.post_matches
+    Args.post_prices        = args.post_prices
     Args.sell               = args.sell
     Args.user               = args.user
     Args.price              = args.price

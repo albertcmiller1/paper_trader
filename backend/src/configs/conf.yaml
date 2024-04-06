@@ -9,6 +9,13 @@ local:
     spread:  "ws://0.0.0.0:5001/spread"
     curr_price:  "ws://0.0.0.0:5001/price"
 
-aws: 
-  historical_prices: "foobar"
-  transactions: "baz"
+server: 
+  api: 
+    current_price:      "http://0.0.0.0:5001/curr_price"
+    place_order_route:  "http://0.0.0.0:5001/place_order"
+    cancel_order_route: "http://0.0.0.0:5001/cancel_order"
+    order_status_route: "http://0.0.0.0:5001/order_status"
+  ws: 
+    matches: "ws://0.0.0.0:5001/matches"
+    spread:  "ws://0.0.0.0:5001/spread"
+    curr_price:  "ws://0.0.0.0:5001/price"
