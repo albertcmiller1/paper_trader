@@ -17,6 +17,9 @@ function Navigation() {
         <li>
           <Link to="/plot">Plot</Link>
         </li>
+        <li>
+          <Link to="/spread">Spread</Link>
+        </li>
       </ul>
     </nav>
   );

@@ -100,3 +100,4 @@ https://www.tutorialspoint.com/sqlite/sqlite_python.htm
 ## issues 
 * the order book doesnt known if a match_id or any id is in the database or not. 
 * aka, we need to truncate the databases 
+* need error handling 

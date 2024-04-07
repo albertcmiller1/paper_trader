@@ -8,12 +8,14 @@ import HomePage       from './pages/HomePage';
 import PlotPage       from './pages/PlotPage';
 import TradePage      from './pages/TradePage';
 import PortfolioPage  from './pages/PortfolioPage';
+import SpreadPage     from './pages/SpreadPage'
 import NotFoundPage   from './pages/NotFoundPage';
 
 const WS_URL = 'ws://0.0.0.0:5001/price';
 
 const App = () => {
   const [messageHistory, setMessageHistory] = useState([]); 
+
   const {
       sendMessage,
       sendJsonMessage,
@@ -22,7 +24,7 @@ const App = () => {
       readyState,
       getWebSocket,
   } = useWebSocket(WS_URL, {
-      onOpen: () => console.log('opened'),
+      onOpen: () => console.log('opened curr price socket'),
       // Will attempt to reconnect on all close events, such as server shutting down
       shouldReconnect: (closeEvent) => false,
   });
@@ -44,6 +46,7 @@ const App = () => {
         <Route path="/home"         element={<HomePage liveStockData={messageHistory}/>}/>
         <Route path="/plot"         element={<PlotPage/>}/>
         <Route path="/trade"        element={<TradePage/>}/>
+        <Route path="/spread"       element={<SpreadPage/>}/>
         <Route path="/portfolio"    element={<PortfolioPage/>}/>
         <Route path="*"             element={<NotFoundPage/>}/>
       </Routes>
