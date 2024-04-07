@@ -95,3 +95,8 @@ https://www.tutorialspoint.com/sqlite/sqlite_python.htm
 * https://www.npmjs.com/package/react-use-websocket
 * https://www.youtube.com/watch?v=azvcvbeRZ08&ab_channel=WebDevCody
 * https://vishwas-r.medium.com/how-to-use-canvasjs-react-charts-in-react-funcitonal-component-49edf22b632f
+
+
+## issues 
+* the order book doesnt known if a match_id or any id is in the database or not. 
+* aka, we need to truncate the databases 

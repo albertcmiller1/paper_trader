@@ -13,6 +13,8 @@ class DB_Service:
             "MATCH_HISTORY": f"{working_dir}/tables/match_history.db"
         }
         self.create_all_tables()
+        for table in self.tables: 
+            self.truncate_table(table)
 
     def create_all_tables(self):
         for table_name, schema in [PRICE_HISTORY_DB, MATCH_HISTORY_DB]:
@@ -22,6 +24,12 @@ class DB_Service:
         conn = sqlite3.connect(table_name)
         conn.execute(schema)
         conn.close()
+
+    def truncate_table(self, table_name):
+        conn = sqlite3.connect(self.tables[table_name])
+        conn.execute(f"DELETE FROM {table_name};")
+        conn.close()
+
 
     def insert(self, ins_obj):
         table_name, insert_query = self.build_insert_query(ins_obj)

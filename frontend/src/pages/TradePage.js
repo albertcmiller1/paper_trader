@@ -13,6 +13,38 @@ const HomePage = () => {
         console.log(ticker)
         console.log(price)
         console.log(quantity)
+
+        const body = {
+            "orderType": selectedItem, 
+            "ticker": ticker, 
+            "price": price, 
+            "quantity": quantity
+        }
+
+        const post_me = {
+            method: "POST", 
+            mode: "no-cors",
+            cache: "no-cache", 
+            credentials: "same-origin", 
+            headers: {
+              "Content-Type": "application/json",
+              'Accept': 'application/json',
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: "follow", 
+            referrerPolicy: "no-referrer", 
+            "body": JSON.stringify(body), 
+        }
+
+        fetch("http://127.0.0.1:5000/place_order/albert", post_me)
+            .then(response => {
+                return response
+                // return response.json()
+            })
+            .then(dataa => {
+                console.log(dataa)
+            })
+
     }
 
     return (
